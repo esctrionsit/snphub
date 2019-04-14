@@ -72,12 +72,12 @@ snp_fetch_data <- function(sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", bso=
         shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")
     }
     shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
-    shell <- paste(shell, "-f '%CHROM\\t%POS\\t%REF\\t%ALT[\\t%GT]\\n' ", sep = "")
+    shell <- paste(shell, "-f '%CHROM\\t%POS\\t%ANN\\t%REF\\t%ALT[\\t%GT]\\n' ", sep = "")
 
     bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
     if(bcftools_leng[1,1] != "0"){
         fra_snp_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T)
-        names(fra_snp_orivcf) <<- c("CHROM", "POS", "REF", "ALT", fet_sam)
+        names(fra_snp_orivcf) <<- c("CHROM", "POS", "ANN", "REF", "ALT", fet_sam)
     }else{
         fra_snp_orivcf <<- data.frame()
     }
@@ -103,7 +103,7 @@ sample_is_unique <- function(sel_sam){
     T
 }
 
-snp_core_select <- function(rule, s_b=5) {
+snp_core_select <- function(rule, s_b=6) {
     swi <- T
     res <- c()
 
