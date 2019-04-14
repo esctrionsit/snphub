@@ -190,9 +190,6 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	        }
 	    }
 	}
-	# Draw the color legends
-	legend("bottomleft", fill = color, legend = names(color), border = F, box.col = "white", horiz=TRUE, cex = 1.5)
-		#
 	# ========================
 	# plot2: header and legend
 	#
