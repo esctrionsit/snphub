@@ -104,4 +104,4 @@ if(is_correct){
 
 ###############################################################################################
 # Finish
-cat(green("Finish\n"))
+cat(green("[ ] File Checking Finished\n"))
