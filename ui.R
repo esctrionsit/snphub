@@ -10,7 +10,7 @@ source("./scripts/lollipop.R")
 
 tagList(
     includeCSS("style.css"),
-    navbarPage("SnpHub-Zavitan",
+    navbarPage("SnpHub",
         tabPanel("SampleInfo",
             h2("Avaliable samples"),
             shiny::tags$table (width = "100%",

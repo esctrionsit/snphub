@@ -196,7 +196,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("Heatmap", d, ".", input$hp_dty, sep = "")
+            paste("Snphub_Heatmap_", d, ".", input$hp_dty, sep = "")
        },
        content = function(file){
             ggsave(reaobj$plot_hp_res, filename = file, height = as.numeric(input$hp_dth), width = as.numeric(input$hp_dwi), limitsize = FALSE)

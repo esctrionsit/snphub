@@ -1,6 +1,5 @@
 library(ggplot2)
 library(ggmap)
-library(scatterpie)
 library(dplyr)
 
 hm_main <- function(co, ro, lon, lat, mer){
@@ -39,7 +38,7 @@ hm_main <- function(co, ro, lon, lat, mer){
         text_hm_NAwarning <<- paste("Warning: Sample ", paste(NAname_lis, collapse=","), " is/are ignored for don't having location information.")
     }
 
-    p <- hm_draw_plot(lon, lat, mer)
+    p <- hm_draw_plot(lon, lat, mer, co, ro)
     p
   })
 }
@@ -114,7 +113,7 @@ hm_recheck_data <- function(){
     NAname_lis
 }
 
-hm_draw_plot <- function(ilon, ilat, imer){
+hm_draw_plot <- function(ilon, ilat, imer, co, ro){
     p <- tryCatch({
         dff <- merge(fra_glo_samloc, fra_hm_drawdata, by = 'Acession')
 
@@ -125,16 +124,31 @@ hm_draw_plot <- function(ilon, ilat, imer){
 
         # ggplot map data
         world = map_data("world", resolution=0)
+
+        t = read.table(pipe("date +%Y%m%d%H%M%S"))
+        d = as.character(t[1,1])
+        filenametag <- paste("SnpHub_HapMap_", d, sep="")
+        parameter <- paste("Parameter: ", co, "; ", ro,"; ", sep="")
+
         p <- ggplot(data = world, aes(x=long, y=lat, group=group)) + 
             geom_polygon(fill = "white", color = "#A9D3EB") + 
             coord_quickmap(xlim = ilon, ylim = ilat) +
+            labs(title = "Haplotype map", caption = paste0(filenametag, "\n", parameter)) +
             ylab("Latitude") + 
             xlab("Longitude") + 
             theme(
                 panel.background = element_rect(fill = "#A9D3EB"),
                 panel.grid.minor = element_blank(), 
                 panel.grid.major = element_line(colour = "grey90", size = 0.5), 
-                legend.position = "top")
+                legend.position = "top",
+                legend.direction = "horizontal",
+                legend.title = element_blank(),
+                legend.spacing.x = unit(0.01, "npc"),
+                legend.justification = "right",
+                plot.title = element_text(size = 25,hjust=0.5),
+                axis.title = element_text(size=20),
+                strip.text = element_text(size=15),
+                plot.margin = grid::unit(c(0.05,0.05,0.05,0.05), "npc"))
 
         pie.list <- pie %>% 
             tidyr::gather(type, value, -lon, -lat, -radius) %>%
@@ -157,7 +171,7 @@ hm_draw_plot <- function(ilon, ilat, imer){
                 xmin = lon - radius, xmax = lon + radius,
                 ymin = lat - radius, ymax = lat + radius)))
 
-        p + 
+        p <- p + 
             
             # Optional. this hides some tiles of the corresponding color scale BEHIND the
             # pie charts, in order to create a legend for them
@@ -165,7 +179,6 @@ hm_draw_plot <- function(ilon, ilat, imer){
                 aes(x = lon, y = lat, fill = type), 
                 color = "black", width = 0.01, height = 0.01, 
                 inherit.aes = FALSE) +
-            labs(title = text_hm_drawsite) +
             pie.list$subgrob
 
     }, error = function(e) {

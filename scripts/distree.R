@@ -22,7 +22,7 @@ dt_main <- function(ty, ty_tree, dbr, co, ro, ext){
 
         if(code != 0) { return(code+100) }
 
-        p <- dt_draw_plot(dt_gro, ty, ty_tree, dbr)
+        p <- dt_draw_plot(dt_gro, ty, ty_tree, dbr, co, ro, ext)
 
         if(ty == "MDS"){
             tmp <- "MDS"
@@ -113,7 +113,25 @@ dt_error_message <- function(code) {
     code
 }
 
-dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr) {
+dt_draw_alpha <- function (colour, alpha = NA){
+    col <- grDevices::col2rgb(colour, TRUE)/255
+    if (length(colour) != length(alpha)) {
+        if (length(colour) > 1 && length(alpha) > 1) {
+            stop("Only one of colour and alpha can be vectorised")
+        }
+        if (length(colour) > 1) {
+            alpha <- rep(alpha, length.out = length(colour))
+        }else if (length(alpha) > 1) {
+            col <- col[, rep(1, length(alpha)), drop = FALSE]
+        }
+    }
+    alpha[is.na(alpha)] <- col[4, ][is.na(alpha)]
+    new_col <- grDevices::rgb(col[1, ], col[2, ], col[3, ], alpha)
+    new_col[is.na(colour)] <- NA
+    new_col
+}
+
+dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr, co, ro, ext) {
     if(dbr=="Yes"){
         edgelen = T
     }else{
@@ -148,7 +166,43 @@ dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr) {
             }
             tip.color <- color[info_df$Group]
             names(tip.color) <- as.character(info_df$label)
+            layout(mat = matrix(c(2,1,3),ncol = 1), heights = c(1,5,1))
+
+            # plot1: main plot
+            par(mar=c(0,3,0,3))
             plot(tree, edge.color = col.vector, tip.col = tip.color[tree$tip.label], type = treetype, use.edge.length = edgelen)
+            
+            # ========================
+            # plot2: header and legend
+            #
+            par( mar = c(0,3,3,3) )
+            plot(x=0, type="n", bty="n", xaxt="n", yaxt="n", 
+                 xlab="", ylab="", 
+                 xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+
+            # Text ex:  "chr2: 90,936-91,653"
+            # text( 0.5, 1, cex = 3,
+            #      paste(chr, " : ", 
+            #            format(LeftMost, big.mark = ",", scientific = F), " - ", 
+            #            format(RightMost, big.mark = ",", scientific = F), sep = "") )
+            text(0.5, 1, cex = 3, "Phylogenetic tree", pos = 1)
+
+            # Draw the color legends
+            legend("bottomright", fill = color, legend = names(color), border = F, box.col = "white", horiz=TRUE, cex = 1.5, x.intersp = 0.5)
+
+            # ========================
+            # plot3: tag and paras
+            #
+            t = read.table(pipe("date +%Y%m%d%H%M%S"))
+            d = as.character(t[1,1])
+            filenametag <- paste("SnpHub_PhyloTree_", d, sep="")
+            parameter <- paste("Parameter: ", co, "; ", ro,"; flanking ", ext, ";", sep="")
+            #
+            par( mar = c(3,3,0,3) )
+            plot(NULL, NULL, type="n", bty="n", xaxt="n", yaxt="n", 
+                 xlab="", ylab="", 
+                 xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+            text(x = 1, y = 0.5, paste0(filenametag, "\n", parameter), pos = 2)
         }else{
             # MDS
             if (sum(is.na(distdf)) > 0){
@@ -160,9 +214,43 @@ dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr) {
             colnames(loc_df)[c(2,3)] <- c("Dim1", "Dim2")
             color <- rainbow(length(unique(info_df$Group)))
             names(color) <- unique(info_df$Group)
-            plot(loc_df$Dim1, loc_df$Dim2, type = "n", xlab = "Dim1", ylab = "Dim2")
+            #plot1: main plot
+            par(mar=c(5,6,0,6))
+            plot(loc_df$Dim1, loc_df$Dim2, type = "n", xlab = "Dim1", ylab = "Dim2", frame.plot = FALSE, cex.axis = 1.5, cex.lab = 2)
             text(loc_df$Dim1, loc_df$Dim2, col="gray", labels = loc_df$label)
-            points(loc_df$Dim1, loc_df$Dim2, col=alpha(color[loc_df$Group],0.6), pch = 16)
+            points(loc_df$Dim1, loc_df$Dim2, col=dt_draw_alpha(color[loc_df$Group],0.6), pch = 16)
+            #========================
+            # plot2: header and legend
+            #
+            par( mar = c(0,3,3,3) )
+            plot(x=0, type="n", bty="n", xaxt="n", yaxt="n", 
+                 xlab="", ylab="", 
+                 xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+
+            # Text ex:  "chr2: 90,936-91,653"
+            # text( 0.5, 1, cex = 3,
+            #      paste(chr, " : ", 
+            #            format(LeftMost, big.mark = ",", scientific = F), " - ", 
+            #            format(RightMost, big.mark = ",", scientific = F), sep = "") )
+            text(0.5, 1, cex = 3, "Multidimensional scaling", pos = 1)
+
+            # Draw the color legends
+            legend("bottomright", fill = color, legend = names(color), border = F, box.col = "white", horiz=TRUE, cex = 1.5, x.intersp = 0.5)
+
+            #
+            # ========================
+            # plot3: tag and paras
+            #
+            t = read.table(pipe("date +%Y%m%d%H%M%S"))
+            d = as.character(t[1,1])
+            filenametag <- paste("SnpHub_PhyloTree_", d, sep="")
+            parameter <- paste("Parameter: ", co, "; ", ro,"; flanking ", ext, ";", sep="")
+            #
+            par( mar = c(3,3,0,3) )
+            plot(NULL, NULL, type="n", bty="n", xaxt="n", yaxt="n", 
+                 xlab="", ylab="", 
+                 xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+            text(x = 1, y = 0.5, paste0(filenametag, "\n", parameter), pos = 2)
         }
     }, error = function(e) {
         paste("202: Unknown draw time errror." , e, collapse = "\n")

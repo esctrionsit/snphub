@@ -26,7 +26,7 @@ hp_main <- function(co, ro, ext) {
 
         text_hp_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, sep="")
 
-        p <- hp_draw_plot(hp_gro)  
+        p <- hp_draw_plot(hp_gro, co, ro, ext)  
         #return
         p
     })
@@ -124,7 +124,7 @@ hp_trans_data <- function(hp_sam) {
 	fra_hp_orivcf$Sample <<- hp_sam
 }
 
-hp_draw_plot <- function(hp_gro) {
+hp_draw_plot <- function(hp_gro, co, ro, ext) {
 	# add info
 	sample_present <- fra_glo_metadata[fra_glo_metadata$Label %in% fra_hp_orivcf$Sample,]
 	LIST <- sample_present$Label
@@ -161,20 +161,33 @@ hp_draw_plot <- function(hp_gro) {
 	levels(df$Type)[levels(df$Type)=="0.5"] <- "Heter"
 	levels(df$Type)[levels(df$Type)=="1"] <- "Homo"
 
+    #get lab
+    t = read.table(pipe("date +%Y%m%d%H%M%S"))
+    d = as.character(t[1,1])
+    filenametag <- paste("SnpHub_Heatmap_", d, sep="")
+    parameter <- paste("Parameter: ", co, "; ", ro,"; flanking ", ext, ";", sep="")
+    
 	# plot
     p <- ggplot(df,aes(Sample,Mutation,fill=Type))+
-      geom_tile() +
-      scale_fill_manual(values = c("gray95", "grey", "deepskyblue", "blue")) +
-      #scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-      scale_y_discrete(limits = rev(levels(df$Mutation))) +
-      theme_minimal()+
-      facet_grid(. ~ Group, scales = "free", space = "free") +
-      theme(legend.position = "top", 
+        geom_tile() +
+        scale_fill_manual(values = c("gray95", "grey", "deepskyblue", "blue")) +
+        #scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+        scale_y_discrete(limits = rev(levels(df$Mutation))) +
+        theme_minimal()+
+        labs(title = "Haplotype heatmap", caption = paste0(filenametag, "\n", parameter)) +
+        facet_grid(. ~ Group, scales = "free", space = "free") +
+        theme(legend.position = "top",
+            legend.direction = "horizontal",
+            legend.title = element_blank(),
+            legend.spacing.x = unit(0.01, "npc"),
+            legend.justification = "right",
+            plot.title = element_text(size = 25,hjust=0.5),
             axis.text.x = element_text(angle = 70, hjust = 1),
-            plot.title = element_text(size = 17,hjust=0.95),
-            axis.title = element_text(size=25),
-            strip.text = element_text(size=25)) +
-      NULL
+            axis.title = element_text(size=20),
+            strip.text = element_text(size=15),
+            aspect.ratio = 1,
+            plot.margin = grid::unit(c(0.05,0.05,0.05,0.05), "npc")) +
+        NULL
     #return
     p
 }

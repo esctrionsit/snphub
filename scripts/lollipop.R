@@ -28,7 +28,7 @@ lp_main <- function(co, ro, lp_ntrans, ext = "0"){
 	    tran_code <- lp_trans_data()
 
 	    lp_ntrans <- as.numeric(lp_ntrans)
-	    p <- lp_draw_plot(lp_chr, lp_ntrans, lp_beg, lp_end)
+	    p <- lp_draw_plot(lp_chr, lp_ntrans, lp_beg, lp_end, co, ro)
 
 	    text_lp_currpara <<- paste("Parameter: ", co, " ; ", ro, sep="")
 
@@ -92,7 +92,7 @@ lp_trans_data <- function(){
     0
 }
 
-lp_draw_plot <- function(chr, ntrans, beg, end){
+lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
     # Read the input file
 	mainDF <- fra_lp_drawdata
 	#
@@ -119,22 +119,22 @@ lp_draw_plot <- function(chr, ntrans, beg, end){
 	# ========================
 	# plot region definition
 	# plot1: main plot; plot2: header and legend
-	layout(mat = matrix(c(2,1),ncol = 1), heights = c(1,5))
+	layout(mat = matrix(c(2,1,3),ncol = 1), heights = c(1,5,1))
 	# xlim = c(LeftMost, RightMost)
 	# ylim = c(1,10)
 	#
 	color = c("#FF0000FF", "#FFB300FF", "#00FF19FF","#0026FFFF")
-	names(color) <- c("frame_changed", "missense", "nonsense", "intergenic")
+	names(color) <- c("High", "Moderate", "Low", "Modifier")
 	#
 	# ========================
 	# plot1: main plot
 	#
-	par(mar=c(1,6,0,3))
+	par(mar=c(0,6,0,3))
 	xlength = RightMost - LeftMost
 	# Set the xlim and ylim
 	plot(NULL, NULL, 
 	    xlim = c(LeftMost, RightMost), 
-	    ylim = c(1 - N_anno - 2, 5),
+	    ylim = c(1 - N_anno - 1, 5),
 	    xlab = "", ylab = "",
 	    yaxt = "n", xaxt = "n", frame.plot = FALSE,
     	cex.axis = 1.5, cex = 1.5)
@@ -144,7 +144,11 @@ lp_draw_plot <- function(chr, ntrans, beg, end){
 	axis(2, 1:5, c("0%", "25%", "50%", "75%", "100%"), las=2, cex.axis = 2, lwd = 4)
 	# Draw the DNA strands
 	#abline( h = 1, lwd = 2 )
-
+	# plot axis
+	# xaxs does not work as expected
+	abline( h = 1, lwd = 4 )
+	axis(1, pos = 1, lwd = 4, cex.axis = 2, xaxs = "i")
+	axis(2, at = c(1,5), labels = c("0","1"), las=2, cex.axis = 2, lwd = 4)
 	# Draw the loll
 	for( i in seq_len(nrow(mainDF))){
 	    # lines( c(pos[i], pos[i]), c(0, mC[i,k])+k*yscale , lwd=5)
@@ -192,18 +196,35 @@ lp_draw_plot <- function(chr, ntrans, beg, end){
 	# ========================
 	# plot2: header and legend
 	#
-	par( mar = c(0,3,1,3) )
+	par( mar = c(0,3,3,3) )
 	plot(x=0, type="n", bty="n", xaxt="n", yaxt="n", 
 	    xlab="", ylab="", 
 	    xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
 
-	# Text ex:    "chr2: 90,936-91,653"
-	text( 0.5, 0.5, cex = 3,
-	    paste(chr, " : ", 
-	    format(LeftMost, big.mark = ","), " - ", 
-	    format(RightMost, big.mark = ","), sep = "") )
-	text( 0.5, 0.7, cex = 1.5, "")
+	# Text ex:  "chr2: 90,936-91,653"
+	# text( 0.5, 1, cex = 3,
+	#      paste(chr, " : ", 
+	#            format(LeftMost, big.mark = ",", scientific = F), " - ", 
+	#            format(RightMost, big.mark = ",", scientific = F), sep = "") )
+	text(0.5, 1, cex = 3, "SnpFreq", pos = 1)
+	# Draw the color legends
+	legend("bottomright", fill = color, legend = names(color), border = F, box.col = "white", horiz=TRUE, cex = 1.5, x.intersp = 0.5)
+
 	#
+	# ========================
+	# plot3: tag and paras
+	#
+	t = read.table(pipe("date +%Y%m%d%H%M%S"))
+    d = as.character(t[1,1])
+    filenametag <- paste("SnpHub_SnpFreq_", d, sep="")
+    parameter <- paste("Parameter: ", co, "; ", ro,";", sep="")
+    #
+	par( mar = c(3,3,0,3) )
+	plot(NULL, NULL, type="n", bty="n", xaxt="n", yaxt="n", 
+	     xlab="", ylab="", 
+	     xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+	text(x = 1, y = 0.5, paste0(filenametag, "\n", parameter), pos = 2)
+
 }
 
 lp_getAttributeField <- function (x, field, attrsep = ";") {

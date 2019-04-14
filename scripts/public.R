@@ -1,5 +1,4 @@
 #packages
-library(RColorBrewer)
 library(ggplot2)
 library(ggtree)
 library(rjson)

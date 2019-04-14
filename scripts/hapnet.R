@@ -121,13 +121,37 @@ hn_draw_plot <- function(groupf, co, ro, ext){
       table(hap=as.numeric(as.character(ind)),groupf[values,"Group"])
     )
     rownames(hap.pies) <- rownames(hap)
-    pal <- brewer.pal(ncol(hap.pies), "Set3")
+    ## layout
+    layout(mat = matrix(c(2,1,3),ncol = 1), heights = c(1,5,1))
+
+    # main plot
+    par(mar=c(0,3,0,3))
+    color <- c("#8DD3C7", "#FFFFB3", "#BEBADA", "#FB8072", "#80B1D3", "#FDB462", "#B3DE69", "#FCCDE5", "#D9D9D9", "#BC80BD")
+    pal <- color[1:ncol(hap.pies)]
     plot(hap.net, size=attr(hap.net, "freq")^0.5, bg=pal, pie=hap.pies, scale.ratio = 2, fast = F, show.mutation = 3)
-    mtext(co, line = 2, adj = 0)
-    mtext(paste(ro, " with extension ", ext, sep = ""), line = 1, adj = 0)
-    #plot(hap.net, bg=pal, pie=hap.pies, scale.ratio = 1)
+    ## plot2: title and legend
+    par( mar = c(0,3,3,3) )
+    plot(x=0, type="n", bty="n", xaxt="n", yaxt="n", 
+         xlab="", ylab="", 
+         xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
     categories <- colnames(hap.pies)
-    legend("topright", legend=categories,fill=pal,bty="n",cex=1.2,ncol=1)
+    text(0.5, 1, cex = 3, "HapNet", pos = 1)
+    legend("bottomright", fill = pal, legend = categories, border = F, box.col = "white", horiz=TRUE, cex = 1.5, x.intersp = 0.5)
+
+    ## plot3: tag and pars
+    # ========================
+    # plot3: tag and paras
+    #
+    t = read.table(pipe("date +%Y%m%d%H%M%S"))
+    d = as.character(t[1,1])
+    filenametag <- paste("SnpHub_HapNet_", d, sep="")
+    parameter <- paste("Parameter: ", co, "; ", ro,"; flanking ", ext, ";", sep="")
+    #
+    par( mar = c(3,3,0,3) )
+    plot(NULL, NULL, type="n", bty="n", xaxt="n", yaxt="n", 
+         xlab="", ylab="", 
+         xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+    text(x = 1, y = 0.5, paste0(filenametag, "\n", parameter), pos = 2)
 }
 
 hn_range_is_too_long <- function(hn_beg, hn_end) { F }
