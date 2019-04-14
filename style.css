@@ -1,0 +1,17 @@
+td {
+    font-size:18px;
+    font-family:Simsun,"Courier New",monospace;
+    letter-spacing:0px;
+  }
+
+.thx {
+  text-align:right; 
+}
+
+.well {
+  padding-right: 8px;
+}
+
+.tablex {
+  font-weight: 400;
+}
