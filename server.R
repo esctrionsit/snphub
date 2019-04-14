@@ -148,7 +148,7 @@ shinyServer(function(input, output, session){
 	    output$plot1 <- renderPlot({
 			isolate({reaobj$plot_hp_res})
 	    })
-	    plotOutput("plot1", width = reaobj$int_hp_plot_width, height = reaobj$int_hp_plot_height, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    plotOutput("plot1", height = reaobj$int_hp_plot_height + reaobj$int_hp_plot_width*0, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	})
 
 	output$hp_ui_0 <- renderUI({
