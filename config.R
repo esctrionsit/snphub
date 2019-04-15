@@ -1,16 +1,16 @@
 # filepaths
-path_fasta <- "sequence.fa"
-path_fa_index <- "sequence.fa.fai"
-path_gff3 <- "gene.sort.gff3.gz"
-path_metadata <- "sample_name.txt"
-path_geneindex <- "geneinfo.txt"
-path_vcf <- "bcffile.ann.bcf.gz"
-path_groupdata <- "/group_info.txt"
-path_sam_location <- "location_info.txt"
+path_fasta <- "./test/Aet_v4.0.fasta"
+path_fa_index <- "./test/Aet_v4.0.fasta.fai"
+path_gff3 <- "./test/Aet_v4.0.gff3.gz"
+path_metadata <- "./test/sample_name.txt"
+path_geneindex <- "./test/geneinfo.txt"
+path_vcf <- "./test/Aet.ann.bcf.gz"
+path_groupdata <- "./test/group_info.txt"
+path_sam_location <- "./test/location_info.txt"
 
-path_sysinfo <- "sys_info.txt" #The ONLY table that HAVE header, also the ONLY optional table with default value NA
+path_sysinfo <- "./test/sys_info.txt" #The ONLY table that HAVE header, also the ONLY optional table with default value NA
 
-path_UIsetting <- "./sample/ui_setting.json"
+path_UIsetting <- "./test/Aet.json"
 #tool application paths
 path_bcftools <- "bcftools"
 path_samtools <- "samtools"

@@ -10,7 +10,10 @@ source("./scripts/lollipop.R")
 
 tagList(
     includeCSS("style.css"),
-    navbarPage("SnpHub",
+    navbarPage("",
+        tabPanel(span("SnpHub", style="font-family:Arial;font-size:18px;font-weight:450;"),
+            includeHTML("include.html")
+        ),
         tabPanel("SampleInfo",
             h2("Avaliable samples"),
             shiny::tags$table (width = "100%",
@@ -58,6 +61,11 @@ tagList(
                     radioButtons("snp_ty", "Variation type",
                         choices = list("snp","indel", "snp+indel"),
                         selected = "snp+indel",
+                        inline = T),
+
+                    checkboxGroupInput("snp_oi", "Optional information",
+                        choices = list("ANN"="ANN","DP"="DP", "GQ"="GQ"),
+                        selected = c(),
                         inline = T),
 
                     textInput("snp_co_t", "List of samples, must have variant", json_glo_UIsetting$VarTable$Samples1),

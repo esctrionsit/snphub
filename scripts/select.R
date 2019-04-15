@@ -1,4 +1,4 @@
-snp_main <- function(ty, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No", mlr = "1"){
+snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No", mlr = "1"){
     if(is.null(bso)){
          maf = "0"
          bso = "No"
@@ -25,13 +25,13 @@ snp_main <- function(ty, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No", mlr
     if(is.na(as.numeric(maf))) { return(snp_error_message(5)) }
     if(is.na(as.numeric(mlr))) { return(snp_error_message(9)) }
 
-    shell <- snp_fetch_data(sel_chr, sel_beg, sel_end, ty, sel_sam, maf, bso, mlr)
+    shell <- snp_fetch_data(oi, sel_chr, sel_beg, sel_end, ty, sel_sam, maf, bso, mlr)
     #return(data.frame(c(shell)))
 
     if(nrow(fra_snp_orivcf) == 0) { return(snp_error_message(6)) }
 
     sel_rule <- snp_get_sam_rule(co_t, co_f, co_e)
-    sel_code <- snp_core_select(sel_rule)
+    sel_code <- snp_core_select(sel_rule,oi)
 
     if(sel_code > 0) { return(snp_error_message(sel_code + 100)) }
     if(nrow(fra_snp_finalres) == 0) { return(snp_error_message(7)) }
@@ -46,7 +46,7 @@ snp_main <- function(ty, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No", mlr
 
 snp_range_is_too_long <- function(sel_beg, sel_end, ty) { F }
 
-snp_fetch_data <- function(sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", bso="No", mlr="1") {
+snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", bso="No", mlr="1") {
     shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
     if(ty == "snp"){
         shell <- paste(shell, " -v snps ", sep = "")
@@ -72,12 +72,27 @@ snp_fetch_data <- function(sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", bso=
         shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")
     }
     shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
-    shell <- paste(shell, "-f '%CHROM\\t%POS\\t%ANN\\t%REF\\t%ALT[\\t%GT]\\n' ", sep = "")
+    shell <- paste(shell, "-f '%CHROM\\t%POS", sep="")
+    if("ANN" %in% oi){
+        shell <- paste(shell, "\\t%ANN", sep="")
+    }
+    shell <- paste(shell, "\\t%REF\\t%ALT[\\t%GT", sep="")
+    if("DP" %in% oi){
+        shell <- paste(shell, ":%DP", sep="")
+    }
+    if("GQ" %in% oi){
+        shell <- paste(shell, ":%GQ", sep="")
+    }
+    shell <- paste(shell, "]\\n' ", sep="")
 
     bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
     if(bcftools_leng[1,1] != "0"){
         fra_snp_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T)
-        names(fra_snp_orivcf) <<- c("CHROM", "POS", "ANN", "REF", "ALT", fet_sam)
+        if("ANN" %in% oi){
+            names(fra_snp_orivcf) <<- c("CHROM", "POS", "ANN", "REF", "ALT", fet_sam)
+        }else{
+            names(fra_snp_orivcf) <<- c("CHROM", "POS", "REF", "ALT", fet_sam)
+        }
     }else{
         fra_snp_orivcf <<- data.frame()
     }
@@ -103,14 +118,17 @@ sample_is_unique <- function(sel_sam){
     T
 }
 
-snp_core_select <- function(rule, s_b=6) {
+snp_core_select <- function(rule, oi, s_b=5) {
     swi <- T
     res <- c()
-
+    if("ANN" %in% oi){
+        s_b <- 6
+    }
     for(i in 1:nrow(fra_snp_orivcf)){
         swi <- T
         for(j in s_b:ncol(fra_snp_orivcf)){
             tmp <- fra_snp_orivcf[i,j]
+            tmp <- substr(tmp,1,3)
             if(rule[j-s_b+1] == "+"){
                 if(tmp == "0/0" || tmp == "./."){
                     swi <- F

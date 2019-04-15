@@ -132,11 +132,6 @@ dt_draw_alpha <- function (colour, alpha = NA){
 }
 
 dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr, co, ro, ext) {
-    if(dbr=="Yes"){
-        edgelen = T
-    }else{
-        edgelen = F
-    }
     names(group_info) <- c("Accession", "Group")
     dna <- vcfR2DNAbin(vcfR_dt_orivcf, consensus = T, extract.haps = F)
     distdf <- dist.dna(dna, model = "raw")
@@ -147,6 +142,11 @@ dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr, co, ro, ext) {
     names(info_df) <- c("Accession", "label", "Name", "Group")
     p <- tryCatch({
         if("NJ-tree"==dt_pl_ty){
+            if(dbr=="Yes"){
+                edgelen = T
+            }else{
+                edgelen = F
+            }
             if (sum(is.na(distdf)) > 0){
                 tree <- njs(distdf)
                 bool_dt_warning <<- T
@@ -214,6 +214,8 @@ dt_draw_plot <- function(group_info, dt_pl_ty, treetype, dbr, co, ro, ext) {
             colnames(loc_df)[c(2,3)] <- c("Dim1", "Dim2")
             color <- rainbow(length(unique(info_df$Group)))
             names(color) <- unique(info_df$Group)
+            ## layout 
+            layout(mat = matrix(c(2,1,3),ncol = 1), heights = c(1,5,1))
             #plot1: main plot
             par(mar=c(5,6,0,6))
             plot(loc_df$Dim1, loc_df$Dim2, type = "n", xlab = "Dim1", ylab = "Dim2", frame.plot = FALSE, cex.axis = 1.5, cex.lab = 2)

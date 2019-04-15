@@ -1,0 +1,38 @@
+{
+    "VarTable": {
+        "Samples1": "",
+        "Samples2": "",
+        "Samples3": "TA10108,TA10106,TA10330",
+        "Region": "chr1D:1-1000000",
+        "Flanking": "0"
+    },
+    "Heatmap": {
+        "Region": "chr1D:900000-1000000",
+        "Flanking": "0",
+        "Groups": "Set1{TA10108,TA10106,TA10330},Set2{TA10101,TA2510,TA1666,TA1678}"
+    },
+    "HapNet": {
+        "Region": "chr1D:500000-1000000",
+        "Flanking": "0",
+        "Groups": "Set1{TA10210,TA10108,TA10106},Set2{TA10124}"
+    },
+    "PhyloTree": {
+        "Region": "chr1D:1-1000000",
+        "Flanking": "0",
+        "Groups": "Set1{TA10108,TA1666,TA1678,TA2510}"
+    },
+    "HapMap": {
+        "Samples": "TA10108,TA1666,TA1678,TA2510",
+        "Region": "chr1D:635108"
+    },
+    "SnpFreq": {
+        "Samples": "TA10108,TA10106,TA10103",
+        "Region": "chr1D:193000-197000",
+        "Flanking": "0",
+        "tracks": "10"
+    },
+    "SeqMaker": {
+        "Samples": "TA10108,TA10106,TA10103",
+        "Region": "chr1D:1-200"
+    }
+}

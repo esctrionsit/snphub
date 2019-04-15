@@ -1,0 +1,5 @@
+# reference genome
+Assembly name:  Aet v4.0
+GenBank assembly accession: GCA_002575655.1
+Organism name: Aegilops tauschii subsp. strangulata (monocots)
+Infraspecific name: Cultivar: AL8/78

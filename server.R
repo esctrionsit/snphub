@@ -90,7 +90,7 @@ shinyServer(function(input, output, session){
 	output$snp_restable <- renderTable({
         if(input$snp_run){
         	isolate({
-        		reaobj$fra_snp_res <- snp_main(input$snp_ty, input$snp_co_t, input$snp_co_f, input$snp_co_e, input$snp_ro, input$snp_ro_ext, input$snp_maf, input$snp_bso, input$snp_mlr)
+        		reaobj$fra_snp_res <- snp_main(input$snp_ty, input$snp_oi, input$snp_co_t, input$snp_co_f, input$snp_co_e, input$snp_ro, input$snp_ro_ext, input$snp_maf, input$snp_bso, input$snp_mlr)
         		reaobj$text_snp_para <- text_snp_currpara
         		if(names(reaobj$fra_snp_res) == c("Info")){
         			reaobj$snp_stat <- as.character(reaobj$fra_snp_res[1,1])
@@ -110,7 +110,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("VarTable", d, ".csv", sep = "")
+            paste("SnpHub_VarTable", d, ".csv", sep = "")
        },
        content = function(file){
             write.csv(isolate({reaobj$fra_snp_res}), file, row.names = F)
@@ -121,7 +121,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("VarTable", d, ".nucleotide.csv", sep = "")
+            paste("SnpHub_VarTable", d, ".nucleotide.csv", sep = "")
        },
        content = function(file){
        		tmp_fra <- reaobj$fra_snp_res
@@ -130,13 +130,16 @@ shinyServer(function(input, output, session){
        			alt <- strsplit(tmp_fra[i, 4], split = ",")[[1]]
        			tran_lis <- c(ref, alt)
        			for(j in 5:ncol(tmp_fra)){
-       				s <- strsplit(tmp_fra[i,j], split = "/")[[1]]
+       				ori_s <- tmp_fra[i,j]
+       				ori_s <- strsplit(ori_s, split = ":")[[1]]
+       				s <- strsplit(ori_s[1], split = "/")[[1]]
        				s1 <- as.numeric(s[1])
        				if(is.na(s1)){s1 <- "N"}else{s1 <- tran_lis[s1+1]}
        				s2 <- as.numeric(s[2])
        				if(is.na(s2)){s2 <- "N"}else{s2 <- tran_lis[s2+1]}
        				s <- paste(s1, s2, sep = "/")
-       				tmp_fra[i,j] <- s
+       				ori_s[1] <- s
+       				tmp_fra[i,j] <- paste(ori_s, collapse = ":")
        			}
        		}
             write.csv(tmp_fra, file, row.names = F)
@@ -148,7 +151,7 @@ shinyServer(function(input, output, session){
 	    output$plot1 <- renderPlot({
 			isolate({reaobj$plot_hp_res})
 	    })
-	    plotOutput("plot1", height = reaobj$int_hp_plot_height + reaobj$int_hp_plot_width*0, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    plotOutput("plot1", height = reaobj$int_hp_plot_height+reaobj$int_hp_plot_width*0, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	})
 
 	output$hp_ui_0 <- renderUI({
@@ -196,7 +199,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("Snphub_Heatmap_", d, ".", input$hp_dty, sep = "")
+            paste("Snphub_Heatmap", d, ".", input$hp_dty, sep = "")
        },
        content = function(file){
             ggsave(reaobj$plot_hp_res, filename = file, height = as.numeric(input$hp_dth), width = as.numeric(input$hp_dwi), limitsize = FALSE)
@@ -287,7 +290,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("HapNet", d, ".", input$hn_dty, sep = "")
+            paste("SnpHub_HapNet", d, ".", input$hn_dty, sep = "")
        },
        content = function(file){
        		if(input$hn_dty == "pdf"){
@@ -409,7 +412,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("PhyloTree", d, ".", input$dt_dty, sep = "")
+            paste("SnpHub_PhyloTree", d, ".", input$dt_dty, sep = "")
        },
        content = function(file){
 			if(input$dt_dty == "pdf"){
@@ -476,7 +479,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("HapMap", d, ".", input$hm_dty, sep = "")
+            paste("SnpHub_HapMap", d, ".", input$hm_dty, sep = "")
        },
        content = function(file){
             ggsave(reaobj$plot_hm_res, filename = file, height = as.numeric(input$hm_dth), width = as.numeric(input$hm_dwi), limitsize = FALSE)
@@ -567,7 +570,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("SnpFreq", d, ".", input$lp_dty, sep = "")
+            paste("SnpHub_SnpFreq", d, ".", input$lp_dty, sep = "")
        },
        content = function(file){
        		if(input$lp_dty == "pdf"){
@@ -609,7 +612,7 @@ shinyServer(function(input, output, session){
        filename = function(){
             t = read.table(pipe("date +%Y%m%d%H%M%S"))
             d = as.character(t[1,1])
-            paste("SeqMaker", d, ".fasta", sep = "")
+            paste("SnpHub_SeqMaker", d, ".fasta", sep = "")
        },
        content = function(file){
             write.table(isolate({reaobj$fra_ns_res}), file, row.names = F, col.names = F, quote = F, sep = "")
@@ -716,8 +719,8 @@ shinyServer(function(input, output, session){
     	isolate({reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext)})
     	reaobj$text_hp_para <- text_hp_currpara
     	if(length(reaobj$plot_hp_res) != 1){
-	    	reaobj$int_hp_plot_width <- nrow(fra_hp_orivcf)*20 + 120
-	    	reaobj$int_hp_plot_height <- (ncol(fra_hp_orivcf)-1)*20
+	    	reaobj$int_hp_plot_width <- nrow(fra_hp_orivcf)*15 + 160
+	    	reaobj$int_hp_plot_height <- (ncol(fra_hp_orivcf)-1)*20 + 100
 	    	reaobj$hp_stat <- "System Info: Done"
 	    }else{
 	    	reaobj$text_hp_para <- "Parameter: "
