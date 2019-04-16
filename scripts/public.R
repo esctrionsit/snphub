@@ -42,7 +42,13 @@ if(!is.na(path_sysinfo)){
 }else{
     fra_glo_sysdata <- data.frame()
 }
-json_glo_UIsetting <- fromJSON(paste(readLines(path_UIsetting), collapse=""))
+
+if(is.na(path_UIsetting)){
+    path_UIsetting <- "./scripts/empty.json"
+    json_glo_UIsetting <- fromJSON(paste(readLines(path_UIsetting), collapse=""))
+}else{
+    json_glo_UIsetting <- fromJSON(paste(readLines(path_UIsetting), collapse=""))
+}
 
 
 fra_snp_orivcf <- data.frame(c("fra_snp_orivcf"))

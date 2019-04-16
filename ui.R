@@ -116,6 +116,8 @@ tagList(
 
                     textInput("hp_ro_ext", "Flanking region length", json_glo_UIsetting$Heatmap$Flanking),
 
+                    textInput("hp_maf", "Minimum allele frequency (MAF)", "0"),
+
                     actionButton("hp_run", "Draw"),
 
                     actionButton("hp_do", "Download options"),

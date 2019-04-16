@@ -716,11 +716,11 @@ shinyServer(function(input, output, session){
     	## Haplotype Plot
     	############################
     	reaobj$hp_err_on <- F
-    	isolate({reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext)})
+    	isolate({reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext, input$hp_maf)})
     	reaobj$text_hp_para <- text_hp_currpara
     	if(length(reaobj$plot_hp_res) != 1){
 	    	reaobj$int_hp_plot_width <- nrow(fra_hp_orivcf)*15 + 160
-	    	reaobj$int_hp_plot_height <- (ncol(fra_hp_orivcf)-1)*20 + 100
+	    	reaobj$int_hp_plot_height <- (ncol(fra_hp_orivcf)-1)*20 + 150
 	    	reaobj$hp_stat <- "System Info: Done"
 	    }else{
 	    	reaobj$text_hp_para <- "Parameter: "
@@ -738,6 +738,8 @@ shinyServer(function(input, output, session){
 		        reaobj$hp_stat <- "Error 0005:No variation found in current regions."
 		    }else if(code == 6){
 		        reaobj$hp_stat <- "Error 0006:Group not found."
+    		}else if(code == 7){
+		        reaobj$hp_stat <- "Error 0007:MAF must be numeric."
     		}
     		reaobj$hp_err_on <- T
     		reaobj$int_hp_plot_width <- 500

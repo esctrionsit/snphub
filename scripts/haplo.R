@@ -1,10 +1,11 @@
-hp_main <- function(co, ro, ext) {
+hp_main <- function(co, ro, ext, maf="0") {
     withProgress(message = 'Drawing', detail = "  Drawing Haplotype Heatmap plot...", value = 5, {
         text_hp_currpara <<- ""
 
         hp_chr <- pub_check_chr_value(ro)
 
         if(is.na(as.numeric(ext)) || as.numeric(ext) < 0) { return(hp_error_message(1)) }
+        if(is.na(as.numeric(maf))) { return(hp_error_message(7)) }
 
         hp_beg <- pub_check_pos_begin(ro, ext)
         hp_end <- pub_check_pos_end(ro, ext)
@@ -18,7 +19,7 @@ hp_main <- function(co, ro, ext) {
         if(sum(is.na(hp_sam)) > 0 || length(hp_sam) == 0) { return(hp_error_message(4)) }
         if(sum(is.na(hp_gro)) > 0 || nrow(hp_gro) == 0) { return(hp_error_message(6)) }
         
-        hp_fetch_data(hp_chr, hp_beg, hp_end, hp_sam)
+        hp_fetch_data(hp_chr, hp_beg, hp_end, hp_sam, maf)
 
         if(nrow(fra_hp_orivcf) == 0) { return(hp_error_message(5)) }
 
@@ -79,8 +80,11 @@ hp_check_sample_name <- function(co) {
 }
 
 
-hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam) {
+hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam, maf) {
     shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
+    if(maf != "0"){
+        shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
+    }
     shell <- paste(shell, " -r ", sep = "")
     for(i in 1:length(hp_chr)){
         if(i == length(hp_chr)){
