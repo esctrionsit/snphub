@@ -1,7 +1,3 @@
-library(ggplot2)
-library(ggmap)
-library(dplyr)
-
 hm_main <- function(co, ro, lon, lat, mer){
   withProgress(message = 'Drawing', detail = "  Drawing HapMap...", value = 5, {
     text_hm_NAwarning <<- ""

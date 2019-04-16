@@ -1,6 +1,7 @@
 #packages
 library(ggplot2)
-library(ggtree)
+library(ggmap)
+library(dplyr)
 library(rjson)
 library(shiny)
 library(pegas)
