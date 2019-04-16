@@ -69,14 +69,18 @@ lp_trans_data <- function(){
     ac <- fra_lp_orivcf$AC
     for(i in 1:length(inf)){
 		ANN <- inf[i]
-		if(grepl("stop", ANN) || grepl("shift", ANN)){
+		if(grepl("missense_variant", ANN)){
 			res[i,4] <- 1
-		}else if(grepl("missense", ANN)){
+		}else if(grepl("synonymous_variant", ANN)){
 			res[i,4] <- 2
-		}else if(grepl("synonymous", ANN)){
+		}else if(grepl("frameshift_variant", ANN)){
 			res[i,4] <- 3
-		}else{
+		}else if(grepl("stop_gained", ANN) || grepl("stop_lost", ANN)){
 			res[i,4] <- 4
+		}else if(grepl("splice_region_variant", ANN)){
+			res[i,4] <- 5
+		}else{
+			res[i,4] <- 6
 		}
 
 		if(grepl(",", ac[i])){
@@ -123,8 +127,8 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	# xlim = c(LeftMost, RightMost)
 	# ylim = c(1,10)
 	#
-	color = c("#FF0000FF", "#FFB300FF", "#00FF19FF","#0026FFFF")
-	names(color) <- c("High", "Moderate", "Low", "Modifier")
+	color = c("#00D9FFFF", "#00FF19FF", "#FF0000FF", "#FFB300FF","#0026FFFF", "gray")
+	names(color) <- c("missense_variant", "synonymous_variant", "frameshift_variant", "stop_gained/stop_lost", "splice_region_variant", "others")
 	#
 	# ========================
 	# plot1: main plot
@@ -205,8 +209,8 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	#            format(RightMost, big.mark = ",", scientific = F), sep = "") )
 	text(0.5, 1, cex = 3, "SnpFreq", pos = 1)
 	# Draw the color legends
-	legend("bottomright", fill = color, legend = names(color), border = F, box.col = "white", horiz=TRUE, cex = 1.5, x.intersp = 0.5)
-
+	legend("bottomleft", fill = color, legend = names(color), border = F, box.col = "white", horiz=T, cex = 1.3, x.intersp = 0.3)
+	
 	#
 	# ========================
 	# plot3: tag and paras
