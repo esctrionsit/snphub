@@ -36,6 +36,16 @@ shinyServer(function(input, output, session){
 	reaobj$text_lp_para <- "Parameter: "
 	reaobj$text_ns_para <- "Parameter: "
 
+	output$logo <- renderImage({
+        return(list(
+            src = "SnpHub.jpg",
+            width = "100%",
+			height = "100%",
+        	contentType = "image/jpg",
+        	alt = "SnpHub"
+        ))
+    }, deleteFile = FALSE)
+
 	output$sam_table <- DT::renderDataTable(
 		fra_glo_samshow, filter = 'top', server = TRUE, rownames = FALSE,
 		options = list(autoWidth = TRUE, pageLength = 10)
