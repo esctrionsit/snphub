@@ -8,8 +8,10 @@ path_vcf <- "./test/Aet.ann.bcf.gz"
 path_groupdata <- "./test/group_info.txt"
 path_sam_location <- "./test/location_info.txt"
 
-path_sysinfo <- "./test/sys_info.txt" #The ONLY table that HAVE header, also the ONLY optional table with default value NA
+#path_sysinfo <- NA
+path_sysinfo <- "./test/sys_info.txt" 
 
+#path_UIsetting <- NA
 path_UIsetting <- "./test/Aet.json"
 #tool application paths
 path_bcftools <- "bcftools"
