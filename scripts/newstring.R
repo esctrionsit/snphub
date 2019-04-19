@@ -3,7 +3,7 @@ ns_main <- function(ns_ty1, ns_ty2, ns_co, ns_ro){
 	ns_chr <- pub_check_chr_value(ns_ro)
 	ns_beg <- pub_check_pos_begin(ns_ro)
     ns_end <- pub_check_pos_end(ns_ro)
-    ns_sam <- pub_check_sample_name(ns_co)
+    ns_sam <- pub_check_sample_name(ns_co, T)
 
     if(sum(is.na(ns_chr), is.na(ns_beg), is.na(ns_end)) > 0 || length(ns_chr) == 0) { return(ns_error_message(1)) }
     if(sum(is.na(ns_sam)) > 0 || length(ns_sam) == 0) { return(ns_error_message(2)) }
@@ -42,7 +42,12 @@ ns_readdata <- function(ty1, ty2, samp, ns_ge, ro){
         strdata <- read.table(pipe(shell), as.is = T)
         head <- strdata[1,1]
         head <- strsplit(head, ">")[[1]]
-        head <- paste(">", as.character(fra_glo_metadata[which(fra_glo_metadata$Accession == i),]$Label), ":", head[2], sep="")
+        if(i == "#RAW"){
+            tmp_samp <- "RAW"
+        }else{
+            tmp_samp <- as.character(fra_glo_metadata[which(fra_glo_metadata$Accession == i),]$Label)
+        }
+        head <- paste(">", tmp_samp, ":", head[2], sep="")
         strdata[1,1] <- head
         fra_ns_finalres <<- rbind(fra_ns_finalres, strdata)
     }

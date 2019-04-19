@@ -187,13 +187,18 @@ pub_check_pos_end <- function(ro, ro_ext=0) {
     res
 }
 
-pub_check_sample_name <- function(user_sam) {
+pub_check_sample_name <- function(user_sam, support_raw=F) {
     tmp_res <- c()
     res <- c()
     for(i in user_sam){
         tmp_res <- c(tmp_res, strsplit(i, split = ",")[[1]])
     }
     for(i in 1:length(tmp_res)){
+        if(support_raw && grepl("#RAW", tmp_res[i])){
+            tmp <- "#RAW"
+            res <- c(res, tmp)
+            next
+        }
         if(grepl("#", tmp_res[i])){
             tmp <- as.character(fra_glo_groupdata[which(fra_glo_groupdata$Group == substr(tmp_res[i], 2, nchar(tmp_res[i]))),]$Name)
             if(length(tmp) != 1) {
@@ -208,6 +213,9 @@ pub_check_sample_name <- function(user_sam) {
     }
 
     for(i in 1:length(res)){
+        if(support_raw && res[i]=="#RAW"){
+            next
+        }
         tmp <- as.character(fra_glo_metadata[which(fra_glo_metadata$Label == res[i]),]$Accession)
         if(length(tmp) != 1){
             res[i] <- NA
