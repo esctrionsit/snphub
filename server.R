@@ -135,11 +135,16 @@ shinyServer(function(input, output, session){
        },
        content = function(file){
        		tmp_fra <- reaobj$fra_snp_res
+       		if("ANN" %in% names(tmp_fra)){
+       			FC <- 4
+       		}else{
+       			FC <- 3
+       		}
        		for(i in 1:nrow(tmp_fra)){
-       			ref <- tmp_fra[i, 3]
-       			alt <- strsplit(tmp_fra[i, 4], split = ",")[[1]]
+       			ref <- tmp_fra[i, FC]
+       			alt <- strsplit(tmp_fra[i, FC+1], split = ",")[[1]]
        			tran_lis <- c(ref, alt)
-       			for(j in 5:ncol(tmp_fra)){
+       			for(j in (FC+2):ncol(tmp_fra)){
        				ori_s <- tmp_fra[i,j]
        				ori_s <- strsplit(ori_s, split = ":")[[1]]
        				s <- strsplit(ori_s[1], split = "/")[[1]]
@@ -285,6 +290,8 @@ shinyServer(function(input, output, session){
 			        reaobj$hn_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
 			        reaobj$hn_stat <- "Error 0004:Invalid accession detected."
+			    }else if(code == 5){
+			        reaobj$hn_stat <- "Error 0005:Duplicate sample name is not allowed."
 			    }else if(code == 101){
 			        reaobj$hn_stat <- "Error 0101:No variation found in current regions."
 			    }else if(code == 6){
@@ -342,7 +349,9 @@ shinyServer(function(input, output, session){
 				        reaobj$dt_stat <- "Error 0003:Region is too long."
 				    }else if(code == 4){
 				        reaobj$dt_stat <- "Error 0004:Invalid accession detected."
-				    }else if(code == 101){
+				    }else if(code == 5){
+			        	reaobj$dt_stat <- "Error 0005:Duplicate sample name is not allowed."
+			    	}else if(code == 101){
 				        reaobj$dt_stat <- "Error 0101:No variation found in current regions."
 				    }else if(code == 201){
 				        reaobj$dt_stat <- "Error 0201:Missing genotype presents in given region."
@@ -786,6 +795,8 @@ shinyServer(function(input, output, session){
 					reaobj$hm_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
 			        reaobj$hm_stat <- "Error 0004:Invalid accession detected."
+			    }else if(code == 5){
+			        reaobj$hm_stat <- "Error 0005:Duplicate sample name is not allowed."
 			    }else if(code == 101){
 			        reaobj$hm_stat <- "Error 0101:No variation found in current regions."
 	    		}

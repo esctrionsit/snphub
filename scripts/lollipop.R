@@ -17,6 +17,8 @@ lp_main <- function(co, ro, lp_ntrans, ext = "0"){
 
 	    if(sum(is.na(lp_sam)) > 0 || length(lp_sam) == 0) { return(lp_error_message(4)) }
 
+	    lp_sam <- pub_unique_sample(lp_sam)
+
 	    lp_chr <- lp_chr[1]
 	    lp_beg <- lp_beg[1]
 	    lp_end <- lp_end[1]

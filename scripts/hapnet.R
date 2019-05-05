@@ -17,6 +17,7 @@ hn_main <- function(co, ro, ext) {
 
         if(sum(is.na(hn_sam)) > 0 || length(hn_sam) == 0) { return(hn_error_message(4)) }
         if(sum(is.na(hn_gro)) > 0 || nrow(hn_gro) == 0) { return(hn_error_message(6)) }
+        if(FALSE %in% (hn_sam == pub_unique_sample(hn_sam))){ return(hn_error_message(5)) }
 
         fet_code <- hn_fetch_data(hn_chr, hn_beg, hn_end, hn_sam)
 

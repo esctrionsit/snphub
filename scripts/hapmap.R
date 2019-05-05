@@ -20,6 +20,8 @@ hm_main <- function(co, ro, lon, lat, mer){
 
     if(sum(is.na(hm_sam)) > 0 || length(hm_sam) == 0) { return(hm_error_message(4)) }
 
+    hm_sam <- pub_unique_sample(hm_sam)
+
     fet_code <- hm_fetch_data(hm_chr, hm_beg, hm_end, hm_sam)
 
     if(fet_code != 0) { return(hm_error_message(fet_code + 100)) }

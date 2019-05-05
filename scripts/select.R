@@ -1,46 +1,62 @@
 snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No", mlr = "1"){
-    if(is.null(bso)){
-         maf = "0"
-         bso = "No"
-         mlr = "1"
-    }
+    withProgress(message = 'Please wait', detail = "Processing...", value = 5, {
+        if(is.null(bso)){
+             maf = "0"
+             bso = "No"
+             mlr = "1"
+        }
 
-    text_snp_currpara <<- ""
+        text_snp_currpara <<- ""
 
-	sel_chr <- pub_check_chr_value(ro)
+    	sel_chr <- pub_check_chr_value(ro)
 
-    if(is.na(as.numeric(ro_ext)) || as.numeric(ro_ext) < 0) { return(snp_error_message(1)) }
+        if(is.na(as.numeric(ro_ext)) || as.numeric(ro_ext) < 0) { return(snp_error_message(1)) }
 
-    sel_beg <- pub_check_pos_begin(ro, ro_ext)
-    sel_end <- pub_check_pos_end(ro, ro_ext)
+        sel_beg <- pub_check_pos_begin(ro, ro_ext)
+        sel_end <- pub_check_pos_end(ro, ro_ext)
 
-    if(sum(is.na(sel_chr), is.na(sel_beg), is.na(sel_end)) > 0 || length(sel_chr) == 0) { return(snp_error_message(2)) }
-    if(snp_range_is_too_long(sel_beg, sel_end, ty)) { return(snp_error_message(3)) }
-    if(paste(co_t, co_f, co_e, sep = "") == "") {return(snp_error_message(10))}
-    
-    sel_sam <- pub_check_sample_name(c(co_t, co_f, co_e))
+        if(sum(is.na(sel_chr), is.na(sel_beg), is.na(sel_end)) > 0 || length(sel_chr) == 0) { return(snp_error_message(2)) }
+        if(snp_range_is_too_long(sel_beg, sel_end, ty)) { return(snp_error_message(3)) }
+        if(paste(co_t, co_f, co_e, sep = "") == "") {return(snp_error_message(10))}
+        
+        sel_sam <- pub_check_sample_name(c(co_t, co_f, co_e))
 
-    if(sum(is.na(sel_sam)) > 0 || length(sel_sam) == 0) { return(snp_error_message(4)) }
-    if(sample_is_unique(sel_sam) == F) {return(snp_error_message(8))}
-    if(is.na(as.numeric(maf))) { return(snp_error_message(5)) }
-    if(is.na(as.numeric(mlr))) { return(snp_error_message(9)) }
+        if(sum(is.na(sel_sam)) > 0 || length(sel_sam) == 0) { return(snp_error_message(4)) }
+        if(is.na(as.numeric(maf))) { return(snp_error_message(5)) }
+        if(is.na(as.numeric(mlr))) { return(snp_error_message(9)) }
 
-    shell <- snp_fetch_data(oi, sel_chr, sel_beg, sel_end, ty, sel_sam, maf, bso, mlr)
-    #return(data.frame(c(shell)))
+        unique_sam <- pub_unique_sample(sel_sam)
+        shell <- snp_fetch_data(oi, sel_chr, sel_beg, sel_end, ty, unique_sam, maf, bso, mlr)
+        #return(data.frame(c(shell)))
 
-    if(nrow(fra_snp_orivcf) == 0) { return(snp_error_message(6)) }
+        if(nrow(fra_snp_orivcf) == 0) { return(snp_error_message(6)) }
 
-    sel_rule <- snp_get_sam_rule(co_t, co_f, co_e)
-    sel_code <- snp_core_select(sel_rule,oi)
+        if("ANN" %in% oi){
+            fra_snp_orivcf <<- subset(fra_snp_orivcf, select = c("CHROM", "POS", "ANN", "REF", "ALT", sel_sam))
+            names(fra_snp_orivcf) <<- c("CHROM", "POS", "ANN", "REF", "ALT", sel_sam)
+        }else{
+            fra_snp_orivcf <<- subset(fra_snp_orivcf, select = c("CHROM", "POS", "REF", "ALT", sel_sam))
+            names(fra_snp_orivcf) <<- c("CHROM", "POS", "REF", "ALT", sel_sam)
+        }
+        
 
-    if(sel_code > 0) { return(snp_error_message(sel_code + 100)) }
-    if(nrow(fra_snp_finalres) == 0) { return(snp_error_message(7)) }
+        sel_rule <- snp_get_sam_rule(paste(pub_check_sample_name(c(co_t)), collapse=","), paste(pub_check_sample_name(c(co_f)),collapse=","), 
+            paste(pub_check_sample_name(c(co_e)),collapse=","))
+        sel_code <- snp_core_select(sel_rule,oi)
 
-    snp_finalres_header_mapping()
+        if(sel_code > 0) { return(snp_error_message(sel_code + 100)) }
+        if(nrow(fra_snp_finalres) == 0) { return(snp_error_message(7)) }
 
-    text_snp_currpara <<- paste("Parameter: ", ty, " ; ", ro, " ; flask length ", ro_ext, sep="")
+        if("ANN" %in% oi){
+            snp_finalres_header_mapping(c("CHROM", "POS", "ANN", "REF", "ALT", sel_sam))
+        }else{
+            snp_finalres_header_mapping(c("CHROM", "POS", "REF", "ALT", sel_sam))
+        }
 
-    fra_snp_finalres
+        text_snp_currpara <<- paste("Parameter: ", ty, " ; ", ro, " ; flask length ", ro_ext, sep="")
+
+        fra_snp_finalres
+    })
 }
 
 
@@ -109,15 +125,6 @@ snp_get_sam_rule <- function(co_t, co_f, co_e) {
     rule
 }
 
-sample_is_unique <- function(sel_sam){
-    for(i in 1:length(sel_sam)){
-        if(sel_sam[i] %in% sel_sam[-i]){
-            return(F)
-        }
-    }
-    T
-}
-
 snp_core_select <- function(rule, oi, s_b=5) {
     swi <- T
     res <- c()
@@ -153,8 +160,7 @@ snp_core_select <- function(rule, oi, s_b=5) {
     0
 }
 
-snp_finalres_header_mapping <- function(){
-    tmp <- names(fra_snp_finalres)
+snp_finalres_header_mapping <- function(tmp){
     for(i in 1:length(tmp)){
         tmp2 <- as.character(fra_glo_metadata[which(fra_glo_metadata$Accession == tmp[i]),]$Label)
         if(length(tmp2) != 1){

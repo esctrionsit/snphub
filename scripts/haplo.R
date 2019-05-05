@@ -18,16 +18,20 @@ hp_main <- function(co, ro, ext, maf="0") {
 
         if(sum(is.na(hp_sam)) > 0 || length(hp_sam) == 0) { return(hp_error_message(4)) }
         if(sum(is.na(hp_gro)) > 0 || nrow(hp_gro) == 0) { return(hp_error_message(6)) }
+
+        unique_sam <- pub_unique_sample(hp_sam)
         
-        hp_fetch_data(hp_chr, hp_beg, hp_end, hp_sam, maf)
+        hp_fetch_data(hp_chr, hp_beg, hp_end, unique_sam, maf)
 
         if(nrow(fra_hp_orivcf) == 0) { return(hp_error_message(5)) }
 
-        hp_trans_data(hp_sam)
+        fra_hp_orivcf <<- subset(fra_hp_orivcf, select=c("CHROM", "POS", hp_sam))
+
+        hp_trans_data(hp_sam, hp_gro)
 
         text_hp_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, sep="")
 
-        p <- hp_draw_plot(hp_gro, co, ro, ext)  
+        p <- hp_draw_plot(co, ro, ext)  
         #return
         p
     })
@@ -112,7 +116,7 @@ hp_error_message <- function(code) {
     code
 }
 
-hp_trans_data <- function(hp_sam) {
+hp_trans_data <- function(hp_sam, hp_gro) {
 	new_row_name <- paste(fra_hp_orivcf$CHROM, fra_hp_orivcf$POS, sep=":")
 
 	fra_hp_orivcf <<- as.matrix(fra_hp_orivcf)
@@ -126,14 +130,14 @@ hp_trans_data <- function(hp_sam) {
 	colnames(fra_hp_orivcf) <<- new_row_name
     
 	fra_hp_orivcf$Sample <<- hp_sam
+    fra_hp_orivcf$Group <<- hp_gro$Group
 }
 
-hp_draw_plot <- function(hp_gro, co, ro, ext) {
+hp_draw_plot <- function(co, ro, ext) {
 	# add info
 	sample_present <- fra_glo_metadata[fra_glo_metadata$Label %in% fra_hp_orivcf$Sample,]
 	LIST <- sample_present$Label
 	names(LIST) <- sample_present$Name
-	fra_hp_orivcf$Group <<- hp_gro$Group[match(fra_hp_orivcf$Sample, hp_gro$Sample)]
     new_sam <- c()
     for(j in fra_hp_orivcf$Sample){
         tmp3 <- as.character(fra_glo_metadata[which(fra_glo_metadata$Accession == j),]$Name)

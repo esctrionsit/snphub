@@ -51,6 +51,11 @@ if(is.na(path_UIsetting)){
     json_glo_UIsetting <- fromJSON(paste(readLines(path_UIsetting), collapse=""))
 }
 
+if("ALL" %in% fra_glo_groupdata[,1]){
+    fra_glo_groupdata[which(fra_glo_groupdata$Group == "ALL"),2] <- paste(fra_glo_metadata_raw$Accession, collapse=",")
+}else{
+    fra_glo_groupdata <- rbind(fra_glo_groupdata, c("ALL", paste(fra_glo_metadata_raw$Accession, collapse=",")))
+}
 
 fra_snp_orivcf <- data.frame(c("fra_snp_orivcf"))
 fra_snp_finalres <- data.frame(c("fra_snp_finalres"))
@@ -193,6 +198,9 @@ pub_check_sample_name <- function(user_sam, support_raw=F) {
     for(i in user_sam){
         tmp_res <- c(tmp_res, strsplit(i, split = ",")[[1]])
     }
+    if(length(tmp_res) == 0){
+        return(c())
+    }
     for(i in 1:length(tmp_res)){
         if(support_raw && grepl("#RAW", tmp_res[i])){
             tmp <- "#RAW"
@@ -263,5 +271,16 @@ pub_sub_group <- function(co){
     }
 
     #return
+    res
+}
+
+pub_unique_sample <- function(sam){
+    res <- c()
+    for(i in 1:length(sam)){
+        if(sam[i] %in% res){
+            next
+        }
+        res <- c(res, sam[i])
+    }
     res
 }

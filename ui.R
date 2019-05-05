@@ -79,15 +79,19 @@ tagList(
                         selected = c(),
                         inline = T),
 
-                    textInput("snp_co_t", "List of samples, must have variant", json_glo_UIsetting$VarTable$Samples1),
+                    textInput("snp_co_t", "Samples, must have variant", json_glo_UIsetting$VarTable$Samples1),
 
-                    textInput("snp_co_f", "List of samples, must NOT have variant", json_glo_UIsetting$VarTable$Samples2),
+                    textInput("snp_co_f", "Samples, must NOT have variant", json_glo_UIsetting$VarTable$Samples2),
 
-                    textInput("snp_co_e", "List of samples, independent of having variant", json_glo_UIsetting$VarTable$Samples3),
+                    textInput("snp_co_e", "Samples, independent of having variant", json_glo_UIsetting$VarTable$Samples3),
 
-                    textInput("snp_ro", "Region", json_glo_UIsetting$VarTable$Region),
+                    helpText("Use #ALL for all samples"),
 
-                    textInput("snp_ro_ext", "Flanking region length", json_glo_UIsetting$VarTable$Flanking),
+                    helpText("Use #GroupName to use pre-defined groups as samples"),
+
+                    textInput("snp_ro", "Region or GeneID", json_glo_UIsetting$VarTable$Region),
+
+                    textInput("snp_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$VarTable$Flanking),
 
                     actionButton("snp_adv", "Advanced options"),
 
@@ -123,9 +127,9 @@ tagList(
 
                     helpText("Ex: Group1{Sample1,Sample2},Group2{Sample3,Sample4}"),
 
-                    textInput("hp_ro", "Region", json_glo_UIsetting$Heatmap$Region),
+                    textInput("hp_ro", "Region or GeneID", json_glo_UIsetting$Heatmap$Region),
 
-                    textInput("hp_ro_ext", "Flanking region length", json_glo_UIsetting$Heatmap$Flanking),
+                    textInput("hp_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$Heatmap$Flanking),
 
                     textInput("hp_maf", "Minimum allele frequency (MAF)", "0"),
 
@@ -159,9 +163,9 @@ tagList(
 
                     helpText("Ex: Group1{Sample1,Sample2},Group2{Sample3,Sample4}"),
 
-                    textInput("hn_ro", "Region", json_glo_UIsetting$HapNet$Region),
+                    textInput("hn_ro", "Region or GeneID", json_glo_UIsetting$HapNet$Region),
 
-                    textInput("hn_ro_ext", "Flanking region length", json_glo_UIsetting$HapNet$Flanking),
+                    textInput("hn_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$HapNet$Flanking),
 
                     actionButton("hn_run", "Draw"),
 
@@ -202,9 +206,9 @@ tagList(
 
                     helpText("Ex: Group1{Sample1,Sample2},Group2{Sample3,Sample4}"),
 
-                    textInput("dt_ro", "Region", json_glo_UIsetting$PhyloTree$Region),
+                    textInput("dt_ro", "Region or GeneID", json_glo_UIsetting$PhyloTree$Region),
 
-                    textInput("dt_ro_ext", "Flanking region length", json_glo_UIsetting$PhyloTree$Flanking),
+                    textInput("dt_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$PhyloTree$Flanking),
 
                     actionButton("dt_run", "Draw"),
 
@@ -233,6 +237,8 @@ tagList(
             sidebarLayout(
                 sidebarPanel(
                     textInput("hm_co", "Samples", json_glo_UIsetting$HapMap$Samples),
+
+                    helpText("Use #GroupName to use pre-defined groups as samples"),
 
                     textInput("hm_ro", "Site", json_glo_UIsetting$HapMap$Region),
 
@@ -288,9 +294,11 @@ tagList(
                 sidebarPanel(
                     textInput("lp_co", "Samples", json_glo_UIsetting$SnpFreq$Samples),
 
-                    textInput("lp_ro", "Region", json_glo_UIsetting$SnpFreq$Region),
+                    helpText("Use #GroupName to use pre-defined groups as samples"),
 
-                    textInput("lp_ro_ext", "Flanking region length", json_glo_UIsetting$SnpFreq$Flanking),
+                    textInput("lp_ro", "Region or GeneID", json_glo_UIsetting$SnpFreq$Region),
+
+                    textInput("lp_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$SnpFreq$Flanking),
 
                     textInput("lp_mft", "Maxium feature tracks", json_glo_UIsetting$SnpFreq$tracks),
 
@@ -332,7 +340,11 @@ tagList(
                     
                     textInput("ns_co", "Samples", json_glo_UIsetting$SeqMaker$Samples),
 
-                    textInput("ns_ro", "Region", json_glo_UIsetting$SeqMaker$Region),
+                    helpText("Use #RAW for raw reference genome sequence."),
+
+                    helpText("Use #GroupName to use pre-defined groups as samples"),
+
+                    textInput("ns_ro", "Region or GeneID", json_glo_UIsetting$SeqMaker$Region),
                     
                     actionButton("ns_run", "Run"),
 

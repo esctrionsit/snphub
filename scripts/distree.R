@@ -17,6 +17,7 @@ dt_main <- function(ty, ty_tree, dbr, co, ro, ext){
 
         if(sum(is.na(dt_sam)) > 0 || length(dt_sam) == 0) { return(dt_error_message(4)) }
         if(sum(is.na(dt_gro)) > 0 || nrow(dt_gro) == 0) { return(dt_error_message(6)) }
+        if(FALSE %in% (dt_sam == pub_unique_sample(dt_sam))){ return(dt_error_message(5)) }
         
         code <- dt_fetch_data(dt_chr, dt_beg, dt_end, dt_sam)
 
