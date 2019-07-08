@@ -62,60 +62,6 @@ snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No",
 
 snp_range_is_too_long <- function(sel_beg, sel_end, ty) { F }
 
-snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", bso="No", mlr="1") {
-    shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
-    if(ty == "snp"){
-        shell <- paste(shell, " -v snps ", sep = "")
-    }else if(ty == "indel"){
-        shell <- paste(shell, " -v indels ", sep = "")
-    }
-    if(bso == "Yes"){
-        shell <- paste(shell, " -M 2 ", sep = "")
-    }
-    shell <- paste(shell, " -r ", sep = "")
-    for(i in 1:length(sel_chr)){
-        if(i == length(sel_chr)){
-            shell <- paste(shell, sel_chr[i], ":", sel_beg[i], "-", sel_end[i], " ", sep = "")
-        }else{
-            shell <- paste(shell, sel_chr[i], ":", sel_beg[i], "-", sel_end[i], ",", sep = "")
-        }
-    }
-    shell <- paste(shell, " -s ", paste(fet_sam, collapse=","), sep = "")
-    if(maf != "0"){
-        shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
-    }
-    if(mlr != "1"){
-        shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")
-    }
-    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
-    shell <- paste(shell, "-f '%CHROM\\t%POS", sep="")
-    if("ANN" %in% oi){
-        shell <- paste(shell, "\\t%ANN", sep="")
-    }
-    shell <- paste(shell, "\\t%REF\\t%ALT[\\t%GT", sep="")
-    if("DP" %in% oi){
-        shell <- paste(shell, ":%DP", sep="")
-    }
-    if("GQ" %in% oi){
-        shell <- paste(shell, ":%GQ", sep="")
-    }
-    shell <- paste(shell, "]\\n' ", sep="")
-
-    bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
-    if(bcftools_leng[1,1] != "0"){
-        fra_snp_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T)
-        if("ANN" %in% oi){
-            names(fra_snp_orivcf) <<- c("CHROM", "POS", "ANN", "REF", "ALT", fet_sam)
-        }else{
-            names(fra_snp_orivcf) <<- c("CHROM", "POS", "REF", "ALT", fet_sam)
-        }
-    }else{
-        fra_snp_orivcf <<- data.frame()
-    }
-    #return
-    shell
-}
-
 snp_get_sam_rule <- function(co_t, co_f, co_e) {
     rule <- c()
     rule <- c(rule, rep("+", time=length(strsplit(co_t, split = ",")[[1]])))

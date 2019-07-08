@@ -7,6 +7,7 @@ source("./scripts/newstring.R")
 source("./scripts/select.R")
 source("./scripts/hapmap.R")
 source("./scripts/lollipop.R")
+source("./scripts/datafetch.R")
 
 tagList(
     includeCSS("style.css"),
@@ -131,6 +132,16 @@ tagList(
 
                     textInput("hp_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$Heatmap$Flanking),
 
+                    radioButtons("hp_cluster", "Cluster samples according to their genotypes",
+                        choices = list("Yes", "No"),
+                        selected = "Yes",
+                        inline = T),
+
+                    radioButtons("hp_flip", "Flip x and y axis",
+                        choices = list("Yes", "No"),
+                        selected = "Yes",
+                        inline = T),
+
                     textInput("hp_maf", "Minimum allele frequency (MAF)", "0"),
 
                     actionButton("hp_run", "Draw"),
@@ -165,6 +176,11 @@ tagList(
 
                     textInput("hn_ro", "Region or GeneID", json_glo_UIsetting$HapNet$Region),
 
+                    radioButtons("hn_anno", "Print sample names of each haplotype",
+                        choices = list("Yes","No"),
+                        selected = "Yes",
+                        inline = T),
+
                     textInput("hn_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$HapNet$Flanking),
 
                     actionButton("hn_run", "Draw"),
@@ -185,7 +201,7 @@ tagList(
                     verbatimTextOutput("hn_status", placeholder = TRUE),
                     verbatimTextOutput("hn_res_para", placeholder = TRUE),
                     h3(textOutput("hn_text")),
-                    plotOutput("hn_plot")
+                    plotOutput("hn_plot", width = "800px", height = "800px")
                 )
             )
         ),

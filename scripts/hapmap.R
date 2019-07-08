@@ -41,32 +41,6 @@ hm_main <- function(co, ro, lon, lat, mer){
   })
 }
 
-hm_fetch_data <- function(chr, beg, end, sam){
-    shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
-    shell <- paste(shell, " -r ", sep = "")
-    for(i in 1:length(chr)){
-        if(i == length(chr)){
-            shell <- paste(shell, chr[i], ":", beg[i], "-", end[i], " ", sep = "")
-        }else{
-            shell <- paste(shell, chr[i], ":", beg[i], "-", end[i], ",", sep = "")
-        }
-    }
-    shell <- paste(shell, " -s ", paste(sam, collapse=","), sep = "")
-    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
-    shell <- paste(shell, "-f '%CHROM\\t%POS[\\t%GT]\\n' ", sep = "")
-
-    bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
-    if(bcftools_leng[1,1] != "0"){
-        fra_hm_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T)
-        names(fra_hm_orivcf) <<- c(sam)
-    }else{
-        fra_hm_orivcf <<- data.frame()
-        return(1)
-    }
-    #return
-    0
-}
-
 hm_trans_data <- function(sam){
     stat <- 0
     text_hm_drawsite <<- paste(as.character(fra_hm_orivcf[1,1]), as.character(fra_hm_orivcf[1,2]), sep=":")

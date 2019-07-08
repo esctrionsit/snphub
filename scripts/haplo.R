@@ -1,4 +1,4 @@
-hp_main <- function(co, ro, ext, maf="0") {
+hp_main <- function(co, ro, ext, cluster, flip, maf="0") {
     withProgress(message = 'Drawing', detail = "  Drawing Haplotype Heatmap plot...", value = 5, {
         text_hp_currpara <<- ""
 
@@ -31,11 +31,10 @@ hp_main <- function(co, ro, ext, maf="0") {
 
         text_hp_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, sep="")
 
-        p <- hp_draw_plot(co, ro, ext)  
+        p <- hp_draw_plot(co, ro, ext, cluster, flip)  
         #return
         p
     })
-
 }
 
 hp_range_is_too_long <- function(hp_beg, hp_end) {
@@ -83,35 +82,6 @@ hp_check_sample_name <- function(co) {
     res
 }
 
-
-hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam, maf) {
-    shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
-    if(maf != "0"){
-        shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
-    }
-    shell <- paste(shell, " -r ", sep = "")
-    for(i in 1:length(hp_chr)){
-        if(i == length(hp_chr)){
-            shell <- paste(shell, hp_chr[i], ":", hp_beg[i], "-", hp_end[i], " ", sep = "")
-        }else{
-            shell <- paste(shell, hp_chr[i], ":", hp_beg[i], "-", hp_end[i], ",", sep = "")
-        }
-    }
-    shell <- paste(shell, " -s ", paste(hp_sam, collapse=","), sep = "")
-    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
-    shell <- paste(shell, "-f '%CHROM\\t%POS[\\t%GT]\\n' ", sep = "")
-
-    bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
-    if(bcftools_leng[1,1] != "0"){
-        fra_hp_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T)
-    	names(fra_hp_orivcf) <<- c("CHROM", "POS", hp_sam)
-    }else{
-        fra_hp_orivcf <<- data.frame()
-    }
-    #return
-    0
-}
-
 hp_error_message <- function(code) {
     code
 }
@@ -123,8 +93,8 @@ hp_trans_data <- function(hp_sam, hp_gro) {
 
 	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_missing)] <<- "-1"
 	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_nosnp)] <<- "0"
-	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_homo)] <<- "0.5"
-	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_hete)] <<- "1"
+	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_hete)] <<- "0.5"
+	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_homo)] <<- "1"
 
 	fra_hp_orivcf <<- as.data.frame(t(fra_hp_orivcf[,-(1:2)]))
 	colnames(fra_hp_orivcf) <<- new_row_name
@@ -133,7 +103,7 @@ hp_trans_data <- function(hp_sam, hp_gro) {
     fra_hp_orivcf$Group <<- hp_gro$Group
 }
 
-hp_draw_plot <- function(co, ro, ext) {
+hp_draw_plot <- function(co, ro, ext, cluster, flip) {
 	# add info
 	sample_present <- fra_glo_metadata[fra_glo_metadata$Label %in% fra_hp_orivcf$Sample,]
 	LIST <- sample_present$Label
@@ -147,20 +117,29 @@ hp_draw_plot <- function(co, ro, ext) {
     fra_hp_orivcf$Sample <<- new_sam
 	#fra_hp_orivcf$Sample <<- LIST[fra_hp_orivcf$Sample]
 
-	# re-order
-	tryCatch(
-	  error = function(cnd) {
-	    fra_hp_orivcf$Sample <<- factor(fra_hp_orivcf$Sample)
-	  },
-	  {
-	    suppressWarnings(row.order <- hclust(dist(fra_hp_orivcf[,-1]))$order)
-	    fra_hp_orivcf$Sample <<- factor(fra_hp_orivcf$Sample, levels = fra_hp_orivcf$Sample[row.order])
-	  }
-	)
+    if(flip == "Yes"){
+        fra_hp_orivcf$Sample <<- factor(fra_hp_orivcf$Sample, levels = rev(fra_hp_orivcf$Sample))
+    } else{
+        fra_hp_orivcf$Sample <<- factor(fra_hp_orivcf$Sample, levels = fra_hp_orivcf$Sample)
+    }
+
+	if(cluster == "Yes"){
+        # re-order
+        tryCatch(
+            error = function(cnd) {
+                fra_hp_orivcf$Sample <<- factor(fra_hp_orivcf$Sample)
+            },
+            {
+                suppressWarnings(row.order <- hclust(dist(fra_hp_orivcf[,-1]))$order)
+                fra_hp_orivcf$Sample <<- factor(fra_hp_orivcf$Sample, levels = fra_hp_orivcf$Sample[row.order])
+            }
+        )
+    }
 
 	# melt
 	df <- reshape2::melt(fra_hp_orivcf, id.vars = c("Sample", "Group"))
 	colnames(df) <- c("Sample", "Group", "Mutation", "Type")
+    df$Group <- factor(df$Group, levels = unique(df$Group))
 
 	# turn discrete
 	df$Type <- as.factor(df$Type)
@@ -176,26 +155,45 @@ hp_draw_plot <- function(co, ro, ext) {
     parameter <- paste("Parameter: ", co, "; ", ro,"; flanking ", ext, ";", sep="")
     
 	# plot
-    p <- ggplot(df,aes(Sample,Mutation,fill=Type))+
-        geom_tile() +
-        scale_fill_manual(values = c("gray95", "grey", "deepskyblue", "blue")) +
-        #scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-        scale_y_discrete(limits = rev(levels(df$Mutation))) +
-        theme_minimal()+
-        labs(title = "Haplotype heatmap", caption = paste0(filenametag, "\n", parameter)) +
-        facet_grid(. ~ Group, scales = "free", space = "free") +
-        theme(legend.position = "top",
-            legend.direction = "horizontal",
-            legend.title = element_blank(),
-            legend.spacing.x = unit(0.01, "npc"),
-            legend.justification = "right",
-            plot.title = element_text(size = 25,hjust=0.5),
-            axis.text.x = element_text(angle = 70, hjust = 1),
-            axis.title = element_text(size=20),
-            strip.text = element_text(size=15),
-            aspect.ratio = 1,
-            plot.margin = grid::unit(c(0.05,0.05,0.05,0.05), "npc")) +
-        NULL
+    if(flip == "Yes"){
+        p <- ggplot(df,aes(Mutation,Sample,fill=Type))+
+            geom_tile() +
+            scale_fill_manual(values = c("gray95", "grey", "deepskyblue", "blue")) +
+            #scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            scale_x_discrete(limits = rev(levels(df$Mutation))) +
+            theme_minimal()+
+            labs(title = "Haplotype heatmap", caption = paste0(filenametag, "\n", parameter)) +
+            facet_grid(rows = vars(Group), scales = "free", space = "free") +
+            theme(legend.position = "top",
+                legend.direction = "horizontal",
+                legend.title = element_blank(),
+                legend.justification = "right",
+                plot.title = element_text(size = 17,hjust=0.5),
+                axis.text.x = element_text(angle = 70, hjust = 1),
+                axis.title = element_text(size=25),
+                strip.text = element_text(size=25),
+                aspect.ratio = 1) +
+            NULL
+    }else{
+        p <- ggplot(df,aes(Sample,Mutation,fill=Type))+
+            geom_tile() +
+            scale_fill_manual(values = c("gray95", "grey", "deepskyblue", "blue")) +
+            #scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            scale_y_discrete(limits = levels(df$Mutation)) +
+            theme_minimal()+
+            labs(title = "Haplotype heatmap", caption = paste0(filenametag, "\n", parameter)) +
+            facet_grid(cols = vars(Group), scales = "free", space = "free") +
+            theme(legend.position = "top",
+                  legend.direction = "horizontal",
+                  legend.title = element_blank(),
+                  legend.justification = "right",
+                  plot.title = element_text(size = 17,hjust=0.5),
+                  axis.text.x = element_text(angle = 70, hjust = 1),
+                  axis.title = element_text(size=25),
+                  strip.text = element_text(size=25),
+                  aspect.ratio = 1) +
+            NULL
+    }
     #return
     p
 }

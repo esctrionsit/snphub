@@ -1,4 +1,4 @@
-hn_main <- function(co, ro, ext) {
+hn_main <- function(co, ro, anno, ext) {
     withProgress(message = 'Drawing', detail = "  Drawing Haplotype Network plot...", value = 5, {
         text_hn_currpara <<- ""
 
@@ -23,7 +23,11 @@ hn_main <- function(co, ro, ext) {
 
         if(fet_code != 0) { return(hn_error_message(fet_code + 100)) }
 
-        p <- hn_draw_plot(hn_gro, co, ro, ext)
+        hap_chk = hn_check_hap()
+
+        if(length(hap_chk)==1 && !is.na(as.numeric(hap_chk))){ return(hn_error_message(201)) }
+
+        p <- hn_draw_plot(hn_gro, co, ro, ext, anno)
 
         text_hn_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, sep="")
 
@@ -64,52 +68,28 @@ hn_check_sample_name <- function(co) {
     res
 }
 
-hn_fetch_data <- function(hn_chr, hn_beg, hn_end, hn_sam) {
-    shell <- paste(path_bcftools, " view ", sep = "")
-    shell <- paste(shell, path_vcf, " -s ", paste(hn_sam, collapse=","), " --min-ac=1 --threads 4 -m2 -M2 -v snps -r ", sep = "")
-    for(i in 1:length(hn_chr)){
-        if(i == length(hn_chr)){
-            shell <- paste(shell, hn_chr[i], ":", hn_beg[i], "-", hn_end[i], " ", sep = "")
-        }else{
-            shell <- paste(shell, hn_chr[i], ":", hn_beg[i], "-", hn_end[i], ",", sep = "")
-        }
-    }
-    shell <- paste(shell, " | sed 's%1/1%1|1%g; s%0/0%0|0%g; s%./.%.|.%g' ", sep = "")
-    rand <- read.table(pipe("cat /dev/urandom | head -n 10 | md5sum | head -c 10"))
-    rand <- as.character(rand[1,1])
-
-    shell <- paste(shell, " > ", getwd(), "/tmp/tmp.", rand, sep = "")
-    
-    system(shell)
-
-    code = tryCatch({
-        tmp_data <- read.table(paste(getwd(), "/tmp/tmp.", rand, sep = ""), comment.char = "#")
-        0
-    }, error = function(e) {
-        return(1)
-    })
-
-    if(code == 0){
-        vcfR_hn_orivcf <<- read.vcfR(paste(getwd(), "/tmp/tmp.", rand, sep = ""))
-        system(paste("rm -f ", getwd(), "/tmp/tmp.", rand, sep = ""))
-        #return
-        0
-    }else{
-        vcfR_hn_orivcf <<- data.frame()
-        system(paste("rm -f ", getwd(), "/tmp/tmp.", rand, sep = ""))
-        #return
-        code
-    }    
-    
-    
-}
-
-hn_draw_plot <- function(groupf, co, ro, ext){
+hn_check_hap <- function(){
     dna <- vcfR2DNAbin(vcfR_hn_orivcf, consensus = T, extract.haps = F)
     hap <- haplotype(dna)
     hap <- sort(hap, what = "labels")
-    hap.net <- haploNet(hap, getProb = FALSE)
+    withCallingHandlers(
+        warning = function(cnd){
+            return(-1)
+        },  
+        dna
+    )
+}
 
+hn_draw_plot <- function(groupf, co, ro, ext, anno){
+    meta_data <- fra_glo_metadata_raw
+    LIST <- meta_data[,3]
+    names(LIST) <- meta_data[,1]
+
+    dna <- vcfR2DNAbin(vcfR_hn_orivcf, consensus = T, extract.haps = F)
+    hap <- haplotype(dna)
+    hap <- sort(hap, what = "labels")
+
+    hap.net <- haploNet(hap, getProb = FALSE)
     # group file
     groupf <- groupf[match(labels(dna), groupf$Sample),]
 
@@ -129,12 +109,49 @@ hn_draw_plot <- function(groupf, co, ro, ext){
     par(mar=c(0,3,0,3))
     color <- c("#8DD3C7", "#FFFFB3", "#BEBADA", "#FB8072", "#80B1D3", "#FDB462", "#B3DE69", "#FCCDE5", "#D9D9D9", "#BC80BD")
     pal <- color[1:ncol(hap.pies)]
-    plot(hap.net, size=attr(hap.net, "freq")^0.5, bg=pal, pie=hap.pies, scale.ratio = 2, fast = F, show.mutation = 3)
+    plotObj <- plot(hap.net, size=attr(hap.net, "freq")^0.5, bg=pal, pie=hap.pies, scale.ratio = 2, fast = F, show.mutation = 3)
+    if(as.character(anno) == "Yes"){
+        # xleft <- min(plotObj$xx)
+        # xright <- max(plotObj$xx)
+        # yupper <- max(plotObj$yy)
+        # ybuttom <- min(plotObj$yy)
+        xleft <- par("usr")[1]
+        xright <- par("usr")[2]
+        ybuttom <- par("usr")[3]
+        yupper <- par("usr")[4]
+
+        xrange <- xright - xleft
+        yrange <- yupper - ybuttom
+
+
+        sample_order <- LIST[attr(dna, "dimnames")[[1]]]
+        hap_order <- attr(hap, "dimnames")[[1]]
+
+        if (xrange >= yrange){
+            textx <- xleft + xrange/10
+            texty <- yupper + (xrange - yrange)/2 - yrange/3
+        } else {
+            textx <- xleft - (yrange - xrange)/2 + xrange/10
+            texty <- yupper - yrange/3
+        }
+
+        #toprint <- ""
+        offl <- 0
+        for (i in seq_along(hap_order)){
+            tmpname <- paste0("Samples in haplotype ", hap_order[i], ":", paste(sample_order[attr(hap, "index")[[i]]], collapse = ", "))
+            #toprint <- paste0(toprint, tmpname, "\n")
+            toprint <- stringi::stri_wrap(tmpname, exdent = 4, width = 130)
+            text(x = textx, y = texty - offl, labels = paste(toprint, collapse = "\n"), pos = 4)
+            offl <- offl + length(toprint)*yrange*0.020
+        }
+        # text(x = textx, y = texty, labels = stringi::stri_wrap(toprint, exdent = 2, width = 150, normalize = F), pos = 4)
+    }
+
     ## plot2: title and legend
     par( mar = c(0,3,3,3) )
     plot(x=0, type="n", bty="n", xaxt="n", yaxt="n", 
-         xlab="", ylab="", 
-         xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
+        xlab="", ylab="", 
+        xlim=c(0, 1), ylim=c(0, 1), xaxs="i", yaxs="i")
     categories <- colnames(hap.pies)
     text(0.5, 1, cex = 3, "HapNet", pos = 1)
     legend("bottomright", fill = pal, legend = categories, border = F, box.col = "white", horiz=TRUE, cex = 1.5, x.intersp = 0.5)

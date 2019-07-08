@@ -71,45 +71,6 @@ dt_check_sample_name <- function(co) {
     res
 }
 
-
-dt_fetch_data <- function(dt_chr, dt_beg, dt_end, dt_sam) {
-    shell <- paste(path_bcftools, " view ", sep = "")
-    shell <- paste(shell, path_vcf, " -s ", paste(dt_sam, collapse=","), " --min-ac=1 --threads 4 -m2 -M2 -r ", sep = "")
-    for(i in 1:length(dt_chr)){
-        if(i == length(dt_chr)){
-            shell <- paste(shell, dt_chr[i], ":", dt_beg[i], "-", dt_end[i], " ", sep = "")
-        }else{
-            shell <- paste(shell, dt_chr[i], ":", dt_beg[i], "-", dt_end[i], ",", sep = "")
-        }
-    }
-    rand <- read.table(pipe("cat /dev/urandom | head -n 10 | md5sum | head -c 10"))
-    rand <- as.character(rand[1,1])
-
-    shell <- paste(shell, " > ", getwd(), "/tmp/tmp.", rand, sep = "")
-    
-    system(shell)
-
-    code = tryCatch({
-        tmp_data <- read.table(paste(getwd(), "/tmp/tmp.", rand, sep = ""), comment.char = "#")
-        0
-    }, error = function(e) {
-        return(1)
-    })
-
-    if(code == 0){
-        vcfR_dt_orivcf <<- read.vcfR(paste(getwd(), "/tmp/tmp.", rand, sep = ""))
-        system(paste("rm -f ", getwd(), "/tmp/tmp.", rand, sep = ""))
-        #return
-        0
-    }else{
-        vcfR_dt_orivcf <<- data.frame()
-        system(paste("rm -f ", getwd(), "/tmp/tmp.", rand, sep = ""))
-        #return
-        code
-    }    
-    
-}
-
 dt_error_message <- function(code) {
     code
 }

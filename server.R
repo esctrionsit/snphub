@@ -21,6 +21,8 @@ shinyServer(function(input, output, session){
 	reaobj$lp_err_on <- F
 	reaobj$int_hp_plot_width <- 1000
 	reaobj$int_hp_plot_height <- 500
+	reaobj$int_hp_plot_cluster <- 0
+	reaobj$int_hp_plot_flip <- 10
 
 	reaobj$fra_snp_res <- data.frame()
 	reaobj$plot_hp_res <- "ggplot"
@@ -161,12 +163,15 @@ shinyServer(function(input, output, session){
        }
     )
 
-	output$hp_plot <- renderUI({
-	    
+	output$hp_plot <- renderUI({    
 	    output$plot1 <- renderPlot({
 			isolate({reaobj$plot_hp_res})
 	    })
-	    plotOutput("plot1", height = reaobj$int_hp_plot_height+reaobj$int_hp_plot_width*0, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    if(reaobj$int_hp_plot_flip==20){
+	    	plotOutput("plot1", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    }else{
+	    	plotOutput("plot1", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    }
 	})
 
 	output$hp_ui_0 <- renderUI({
@@ -274,7 +279,7 @@ shinyServer(function(input, output, session){
 	output$hn_plot <- renderPlot({
 		if(input$hn_run){
 			reaobj$hn_err_on <- F
-			isolate({plot_hn_res <- hn_main(input$hn_co, input$hn_ro, input$hn_ro_ext)})
+			isolate({plot_hn_res <- hn_main(input$hn_co, input$hn_ro, input$hn_anno, input$hn_ro_ext)})
 			reaobj$text_hn_para <- text_hn_currpara
 			if(length(plot_hn_res) != 1){
 		    	reaobj$hn_stat <- "System Info: Done"
@@ -296,6 +301,8 @@ shinyServer(function(input, output, session){
 			        reaobj$hn_stat <- "Error 0101:No variation found in current regions."
 			    }else if(code == 6){
 			        reaobj$hn_stat <- "Error 0006:Group not found."
+			    }else if(code == 201){
+			        reaobj$hn_stat <- "Error 0201:Only has one type of haplotype."
 			    }
 			    reaobj$hn_err_on <- T
 		    }
@@ -316,7 +323,7 @@ shinyServer(function(input, output, session){
        			png(file, width = as.numeric(input$hn_dwi)*100, height = as.numeric(input$hn_dth)*100)
        		}
        		
-       		isolate({hn_main(input$hn_co, input$hn_ro, input$hn_ro_ext)})
+       		isolate({hn_main(input$hn_co, input$hn_ro, input$hn_anno, input$hn_ro_ext)})
        		dev.off()
        }
     )
@@ -576,6 +583,8 @@ shinyServer(function(input, output, session){
 			        reaobj$lp_stat <- "Error 0004:Invalid accession detected."
 			    }else if(code == 5){
 			        reaobj$lp_stat <- "Error 0005:Maxium feature tracks must be integer."
+			    }else if(code == 6){
+			        reaobj$lp_stat <- "Error 0006:Group not found."
 			    }else if(code == 101){
 			        reaobj$lp_stat <- "Error 0101:No variation found in current regions."
 			    }
@@ -735,7 +744,19 @@ shinyServer(function(input, output, session){
     	## Haplotype Plot
     	############################
     	reaobj$hp_err_on <- F
-    	isolate({reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext, input$hp_maf)})
+    	isolate({
+    		reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext, input$hp_cluster, input$hp_flip, input$hp_maf)
+    	})
+    	if(input$hp_cluster == "Yes"){
+    		reaobj$int_hp_plot_cluster <- 0
+    	}else{
+    		reaobj$int_hp_plot_cluster <- 1
+    	}
+    	if(input$hp_flip == "Yes"){
+    		reaobj$int_hp_plot_flip <- 10
+    	}else{
+    		reaobj$int_hp_plot_flip <- 20
+    	}
     	reaobj$text_hp_para <- text_hp_currpara
     	if(length(reaobj$plot_hp_res) != 1){
 	    	reaobj$int_hp_plot_width <- nrow(fra_hp_orivcf)*15 + 160

@@ -31,7 +31,7 @@ pub_read_sysinfo <- function(path_sysinfo){
 ##########################################################################################################################
 #global varities
 fra_glo_geneindex <- read.table(path_geneindex, col.names = c("CHROM", "begin", "end", "gene_name"), header = F, as.is = T)
-fra_glo_metadata_raw <- read.table(path_metadata, header = T, as.is = T, fill=T)
+fra_glo_metadata_raw <- read.table(path_metadata, header = T, as.is = T, fill=T, sep="\t")
 fra_glo_metadata <- fra_glo_metadata_raw[,1:3]
 names(fra_glo_metadata) <-  c("Accession", "Label", "Name")
 fra_glo_groupdata <- read.table(path_groupdata, col.names = c("Group", "Name"), header = F, as.is = T)
@@ -232,6 +232,39 @@ pub_check_sample_name <- function(user_sam, support_raw=F) {
         }
     }
     #res[! res %in% lis_glo_vcfsamples] <- NA
+    #return
+    res
+}
+
+pub_check_gro_sample_name <- function(co) {
+    res <- c()
+    if(grepl("\\}", co)){
+        tmp1 <- strsplit(co, split = "\\}")[[1]]
+        for(i in tmp1){
+            samps <- strsplit(i, split = "\\{")[[1]][2]
+            samps <- strsplit(samps, split = ",")[[1]]
+            for(j in samps){
+                tmp2 <- as.character(fra_glo_metadata[which(fra_glo_metadata$Label == j),]$Accession)
+                if(length(tmp2) != 1) { tmp2 <- NA }
+                res <- c(res, tmp2)
+            }
+        }
+    }else{
+        tmp1 <- strsplit(co, split = ",")[[1]]
+        for(i in tmp1){
+            tmp2 <- as.character(fra_glo_groupdata[which(fra_glo_groupdata$Group == i),]$Name)
+            if(length(tmp2) != 1) {
+                tmp2 <- NA
+            }else{
+                tmp2 <- strsplit(tmp2, split = ",")[[1]]
+            }
+            for(j in tmp2){
+                tmp3 <- as.character(fra_glo_metadata[which(fra_glo_metadata$Label == j),]$Accession)
+                if(length(tmp3) != 1) { tmp3 <- NA }
+                res <- c(res, tmp3)
+            }
+        }
+    }
     #return
     res
 }

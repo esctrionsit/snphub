@@ -26,7 +26,7 @@
         "Region": "chr1D:635108"
     },
     "SnpFreq": {
-        "Samples": "TA10108,TA10106,TA10103",
+        "Samples": "Set1{TA10108,TA10106,TA10330},Set2{TA10101,TA2510,TA1666,TA1678}",
         "Region": "chr1D:193000-197000",
         "Flanking": "0",
         "tracks": "10"
