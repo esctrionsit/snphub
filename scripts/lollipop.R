@@ -145,7 +145,7 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	# Set the xlim and ylim
 	plot(NULL, NULL, 
 	    xlim = c(LeftMost, RightMost), 
-	    ylim = c(1 - N_anno - 1, 6 + (n_group-1)*6),
+	    ylim = c(1 - N_anno*1.5 - 1, 6 + (n_group-1)*6),
 	    xlab = "", ylab = "",
 	    yaxt = "n", xaxt = "n", frame.plot = FALSE,
     	cex.axis = 1.5, cex = 1.5)
@@ -180,7 +180,7 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	                                             annoDF[annoDF$Par == trans, ])
 	        annoDFtmp <- annoDFtmp[!is.na(annoDFtmp$seqname),]
 	        
-	        y_center = 0.5 - N_anno + i - 1
+	        y_center = 0.5 - N_anno*1.5 + i*1.5 - 1.5
 	        # gene name on upmost
 	        for (j in seq_len(nrow(annoDFtmp)) ) {
 	            annotype = annoDFtmp[j,3]
@@ -200,7 +200,7 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	                x2 = c(Right, Left)[c("+","-")==strand]
 	                segments(Left, y_center, Right, y_center, col = "black")
 			        arrows(x0, y_center, x1, y_center, length = 0.08 )
-			        text(x0-(RightMost-LeftMost)/7*StrandSign, y_center, labels = annoDFtmp[j,10], cex = 1.5)
+			        text(x0, y_center+0.4, labels = annoDFtmp[j,10], cex = 1, pos = 4)
 	            }
 	        }
 	    }

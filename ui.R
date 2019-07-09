@@ -308,9 +308,9 @@ tagList(
         tabPanel("SnpFreq",
             sidebarLayout(
                 sidebarPanel(
-                    textInput("lp_co", "Samples", json_glo_UIsetting$SnpFreq$Samples),
+                    textInput("lp_co", "Groups", json_glo_UIsetting$SnpFreq$Samples),
 
-                    helpText("Use #GroupName to use pre-defined groups as samples"),
+                    helpText("Ex: Group1{Sample1,Sample2},Group2{Sample3,Sample4}"),
 
                     textInput("lp_ro", "Region or GeneID", json_glo_UIsetting$SnpFreq$Region),
 
