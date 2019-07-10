@@ -151,16 +151,14 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
     	cex.axis = 1.5, cex = 1.5)
 	# -------------------------
 	# plot axis
-	axis(1, pos = 1, lwd = 4, cex.axis = 2, xaxs = "i")
-	axis(2, 1:5, c("0%", "25%", "50%", "75%", "100%"), las=2, cex.axis = 2, lwd = 4)
 	# Draw the DNA strands
 	#abline( h = 1, lwd = 2 )
 	# plot axis
 	# xaxs does not work as expected
+        axis(1, pos = 1, lwd = 4, cex.axis = 2, xaxs = "i")
 	for (j in seq_len(n_group)){
 		abline( h = 1 + (j-1)*6, lwd = 4 )
-		axis(1, pos = 1, lwd = 4, cex.axis = 2, xaxs = "i")
-		axis(2, at = c(1 + (j-1)*6, 5 + (j-1)*6), labels = c("0","1"), las=2, cex.axis = 2, lwd = 4)
+		axis(2, at = 1:5 + (j-1)*6, labels = c("0%", "25%", "50%", "75%", "100%"), las=2, cex.axis = 2, lwd = 4)
 		text(x = LeftMost, y = j*6, group_names[j], pos = 1, cex=2.5)
 		# Draw the loll
 		for( i in seq_len(nrow(mainDF))){
@@ -179,7 +177,8 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	        annoDFtmp <- rbind(annoDF[annoDF$feature == "mRNA" & annoDF$ID == trans,], 
 	                                             annoDF[annoDF$Par == trans, ])
 	        annoDFtmp <- annoDFtmp[!is.na(annoDFtmp$seqname),]
-	        
+	        annoDFtmp <- annoDFtmp[order(annoDFtmp$feature, decreasing = T),]
+
 	        y_center = 0.5 - N_anno*1.5 + i*1.5 - 1.5
 	        # gene name on upmost
 	        for (j in seq_len(nrow(annoDFtmp)) ) {
@@ -196,11 +195,11 @@ lp_draw_plot <- function(chr, ntrans, beg, end, co, ro){
 	                strand = annoDFtmp[j,7]
 	                StrandSign=(c(1,-1)[c("+","-")==strand])
 	                x0 = c(Left, Right)[c("+","-")==strand]
-	                x1 = x0 - (RightMost-LeftMost)/30*StrandSign
 	                x2 = c(Right, Left)[c("+","-")==strand]
+                        x1 = x2 + (RightMost-LeftMost)/30*StrandSign
 	                segments(Left, y_center, Right, y_center, col = "black")
-			        arrows(x0, y_center, x1, y_center, length = 0.08 )
-			        text(x0, y_center+0.4, labels = annoDFtmp[j,10], cex = 1, pos = 4)
+			arrows(x2, y_center, x1, y_center, length = 0.08, col="blue")
+			text(Left, y_center+0.4, labels = annoDFtmp[j,10], cex = 1.5, pos = 4)
 	            }
 	        }
 	    }
