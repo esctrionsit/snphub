@@ -139,7 +139,7 @@ tagList(
 
                     radioButtons("hp_flip", "Flip x and y axis",
                         choices = list("Yes", "No"),
-                        selected = "Yes",
+                        selected = "No",
                         inline = T),
 
                     textInput("hp_maf", "Minimum allele frequency (MAF)", "0"),
