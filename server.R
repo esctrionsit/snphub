@@ -168,9 +168,9 @@ shinyServer(function(input, output, session){
 			isolate({reaobj$plot_hp_res})
 	    })
 	    if(reaobj$int_hp_plot_flip==20){
-	    	plotOutput("plot1", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot1", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+200+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }else{
-	    	plotOutput("plot1", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot1", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+200+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }
 	})
 
