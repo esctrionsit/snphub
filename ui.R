@@ -1,13 +1,14 @@
-source("./config.R")
-source("./scripts/public.R")
-source("./scripts/haplo.R")
-source("./scripts/hapnet.R")
-source("./scripts/distree.R")
-source("./scripts/newstring.R")
-source("./scripts/select.R")
-source("./scripts/hapmap.R")
-source("./scripts/lollipop.R")
-source("./scripts/datafetch.R")
+source("./setup_config.R")
+source("./advanced_config.R")
+source("./runtime_scripts/public.R")
+source("./runtime_scripts/haplo.R")
+source("./runtime_scripts/hapnet.R")
+source("./runtime_scripts/distree.R")
+source("./runtime_scripts/newstring.R")
+source("./runtime_scripts/select.R")
+source("./runtime_scripts/hapmap.R")
+source("./runtime_scripts/lollipop.R")
+source("./runtime_scripts/datafetch.R")
 
 tagList(
     includeCSS("style.css"),
@@ -78,6 +79,11 @@ tagList(
                     checkboxGroupInput("snp_oi", "Optional information",
                         choices = list("ANN"="ANN","DP"="DP", "GQ"="GQ"),
                         selected = c(),
+                        inline = T),
+
+                    radioButtons("snp_pty", "Show genotype in nucleotide",
+                        choices = list("Yes"="Yes","No"="No"),
+                        selected = "No",
                         inline = T),
 
                     textInput("snp_co_t", "Samples, must have variant", json_glo_UIsetting$VarTable$Samples1),
@@ -176,9 +182,9 @@ tagList(
 
                     textInput("hn_ro", "Region or GeneID", json_glo_UIsetting$HapNet$Region),
 
-                    radioButtons("hn_anno", "Print sample names of each haplotype",
+                    radioButtons("hn_anno", "Embed sample names in figure",
                         choices = list("Yes","No"),
-                        selected = "Yes",
+                        selected = "No",
                         inline = T),
 
                     textInput("hn_ro_ext", "Flanking region length (bp)", json_glo_UIsetting$HapNet$Flanking),
@@ -201,7 +207,8 @@ tagList(
                     verbatimTextOutput("hn_status", placeholder = TRUE),
                     verbatimTextOutput("hn_res_para", placeholder = TRUE),
                     h3(textOutput("hn_text")),
-                    plotOutput("hn_plot", width = "800px", height = "800px")
+                    plotOutput("hn_plot", width = "800px", height = "800px"),
+                    DT::dataTableOutput("hn_det")
                 )
             )
         ),
@@ -213,6 +220,13 @@ tagList(
                                     choices = list("NJ-tree","MDS"),
                                     selected = "NJ-tree",
                                     inline = T),
+
+                    radioButtons("dt_del", "Delete missing site while calculating distance matrix?",
+                                    choices = list("Yes","No"),
+                                    selected = "Yes",
+                                    inline = T),
+
+                    helpText("Choose NO here may reduce the accuracy of distance."),
 
                     uiOutput("dt_ui_ty_tree"),
 
@@ -244,7 +258,10 @@ tagList(
                     verbatimTextOutput("dt_status", placeholder = TRUE),
                     verbatimTextOutput("dt_res_para", placeholder = TRUE),
                     h3(textOutput("dt_text")),
-                    plotOutput("dt_plot", height = "500px")
+                    textOutput("dt_det_text"),
+                    plotOutput("dt_plot", height = "800px", width = "800px"),
+                    textOutput("dt_det_exp"),
+                    DT::dataTableOutput("dt_det")
                 )
             )
         ),
@@ -259,6 +276,11 @@ tagList(
                     textInput("hm_ro", "Site", json_glo_UIsetting$HapMap$Region),
 
                     helpText("Input should be a single site (Ex: chr1A:220037)"),
+
+                    radioButtons("hm_mis", "Draw type missing on plot",
+                        choices = list("Yes"="Yes","No"="No"),
+                        selected = "No",
+                        inline = T),
 
                     sliderInput(inputId = "hm_lon",
                                         label = "Longitude range",
@@ -281,6 +303,8 @@ tagList(
                                         value = 1
                                     ),
 
+                    textInput("hm_scal", "Pie zoom factor", "1"),
+
                     actionButton("hm_run", "Draw"),
 
                     actionButton("hm_do", "Download Options"),
@@ -299,8 +323,9 @@ tagList(
                     verbatimTextOutput("hm_status", placeholder = TRUE),
                     verbatimTextOutput("hm_res_para", placeholder = TRUE),
                     h3(textOutput("hm_text")),
-                    plotOutput("hm_plot"),
-                    textOutput("hm_warntext")
+                    uiOutput("hm_plot"),
+                    textOutput("hm_warntext"),
+                    DT::dataTableOutput("hm_det")
                 )
             )
         ),

@@ -23,9 +23,18 @@ shinyServer(function(input, output, session){
 	reaobj$int_hp_plot_height <- 500
 	reaobj$int_hp_plot_cluster <- 0
 	reaobj$int_hp_plot_flip <- 10
+	reaobj$int_hm_plot_width <- 900
+	reaobj$int_hm_plot_height <- 500
+
+	reaobj$int_hm_count <- 0
 
 	reaobj$fra_snp_res <- data.frame()
 	reaobj$plot_hp_res <- "ggplot"
+	reaobj$fra_hn_det <- data.frame()
+	reaobj$fra_dt_det <- data.frame()
+	reaobj$text_dt_det_mes <- ""
+	reaobj$text_dt_det_exp <- ""
+	reaobj$fra_hm_det <- data.frame()
 	reaobj$plot_hm_res <- "ggplot"
 	reaobj$text_hm_warnt <- ""
 	reaobj$fra_ns_res <- data.frame()
@@ -64,7 +73,7 @@ shinyServer(function(input, output, session){
 	)
 
 	output$sys_table <- DT::renderDataTable(
-		fra_glo_sysdata, filter = 'top', server = TRUE, rownames = FALSE,
+		fra_glo_sysdata, rownames = FALSE,
 		options = list(autoWidth = TRUE, pageLength = 10)
 	)
 
@@ -111,7 +120,34 @@ shinyServer(function(input, output, session){
         		}else{
         			reaobj$snp_stat <- "System Info: Done"
         		}
-        		reaobj$fra_snp_res
+        		if(input$snp_pty == "No"){
+        			reaobj$fra_snp_res
+    			}else{
+    				tmp_fra <- reaobj$fra_snp_res
+		       		if("ANN" %in% names(tmp_fra)){
+		       			FC <- 4
+		       		}else{
+		       			FC <- 3
+		       		}
+		       		for(i in 1:nrow(tmp_fra)){
+		       			ref <- tmp_fra[i, FC]
+		       			alt <- strsplit(tmp_fra[i, FC+1], split = ",")[[1]]
+		       			tran_lis <- c(ref, alt)
+		       			for(j in (FC+2):ncol(tmp_fra)){
+		       				ori_s <- tmp_fra[i,j]
+		       				ori_s <- strsplit(ori_s, split = ":")[[1]]
+		       				s <- strsplit(ori_s[1], split = "/")[[1]]
+		       				s1 <- as.numeric(s[1])
+		       				if(is.na(s1)){s1 <- "N"}else{s1 <- tran_lis[s1+1]}
+		       				s2 <- as.numeric(s[2])
+		       				if(is.na(s2)){s2 <- "N"}else{s2 <- tran_lis[s2+1]}
+		       				s <- paste(s1, s2, sep = "/")
+		       				ori_s[1] <- s
+		       				tmp_fra[i,j] <- paste(ori_s, collapse = ":")
+		       			}
+		       		}
+		       		tmp_fra
+    			}       		
         	})
         }else{
             data.frame()
@@ -125,7 +161,22 @@ shinyServer(function(input, output, session){
             paste("SnpHub_VarTable", d, ".csv", sep = "")
        },
        content = function(file){
-            write.csv(isolate({reaobj$fra_snp_res}), file, row.names = F)
+            tmp_fra <- reaobj$fra_snp_res
+       		if("ANN" %in% names(tmp_fra)){
+       			FC <- 4
+       		}else{
+       			FC <- 3
+       		}
+       		for(i in 1:nrow(tmp_fra)){
+       			for(j in (FC+2):ncol(tmp_fra)){
+       				ori_s <- tmp_fra[i,j]
+       				ori_s <- strsplit(ori_s, split = ":")[[1]]
+       				s <- paste(strsplit(ori_s[1], split = "/")[[1]], collapse = "|")
+       				ori_s[1] <- s
+       				tmp_fra[i,j] <- paste(ori_s, collapse = ":")
+       			}
+       		}
+            write.csv(tmp_fra, file, row.names = F)
        }
     )
 
@@ -168,9 +219,9 @@ shinyServer(function(input, output, session){
 			isolate({reaobj$plot_hp_res})
 	    })
 	    if(reaobj$int_hp_plot_flip==20){
-	    	plotOutput("plot1", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+200+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot1", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }else{
-	    	plotOutput("plot1", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+200+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot1", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }
 	})
 
@@ -281,6 +332,7 @@ shinyServer(function(input, output, session){
 			reaobj$hn_err_on <- F
 			isolate({plot_hn_res <- hn_main(input$hn_co, input$hn_ro, input$hn_anno, input$hn_ro_ext)})
 			reaobj$text_hn_para <- text_hn_currpara
+			reaobj$fra_hn_det <- fra_hn_detail
 			if(length(plot_hn_res) != 1){
 		    	reaobj$hn_stat <- "System Info: Done"
 		    }else{
@@ -294,7 +346,14 @@ shinyServer(function(input, output, session){
 			    }else if(code == 3){
 			        reaobj$hn_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
-			        reaobj$hn_stat <- "Error 0004:Invalid accession detected."
+			    	message <- "Error 0004:Invalid accession or group detected."
+			        if(text_pub_err_samples != ""){
+						message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
+			        }
+			        if(text_pub_err_groups != ""){
+						message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
+			        }
+			        reaobj$hn_stat <- message
 			    }else if(code == 5){
 			        reaobj$hn_stat <- "Error 0005:Duplicate sample name is not allowed."
 			    }else if(code == 101){
@@ -309,6 +368,19 @@ shinyServer(function(input, output, session){
 		    plot_hn_res
         }
 	})
+
+	output$dt_det_text <- renderText({
+		reaobj$text_dt_det_mes
+	})
+
+	output$dt_det_exp <- renderText({
+		reaobj$text_dt_det_exp
+	})
+
+	output$hn_det <- DT::renderDataTable(
+		reaobj$fra_hn_det, rownames = TRUE,
+		options = list(autoWidth = TRUE, pageLength = 10)
+	)
 
 	output$hn_down <- downloadHandler(
        filename = function(){
@@ -332,7 +404,10 @@ shinyServer(function(input, output, session){
 		if(input$dt_run){
 			reaobj$dt_err_on <- F
 			bool_dt_warning <<- F
-			isolate({plot_dt_res <- dt_main(input$dt_ty, input$dt_tty, input$dt_dbr, input$dt_co, input$dt_ro, input$dt_ro_ext)})
+			isolate({plot_dt_res <- dt_main(input$dt_ty, input$dt_tty, input$dt_dbr, input$dt_co, input$dt_ro, input$dt_ro_ext, input$dt_del)})
+			reaobj$fra_dt_det <- fra_dt_detail
+			reaobj$text_dt_det_mes <- text_dt_detail_mess
+			reaobj$text_dt_det_exp <- text_dt_detail_expl
 	    	reaobj$text_dt_para <- text_dt_currpara
 	    	if(length(plot_dt_res) != 1){
 	    		if(bool_dt_warning){
@@ -355,7 +430,14 @@ shinyServer(function(input, output, session){
 				    }else if(code == 3){
 				        reaobj$dt_stat <- "Error 0003:Region is too long."
 				    }else if(code == 4){
-				        reaobj$dt_stat <- "Error 0004:Invalid accession detected."
+				    	message <- "Error 0004:Invalid accession or group detected."
+				        if(text_pub_err_samples != ""){
+							message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
+				        }
+				        if(text_pub_err_groups != ""){
+							message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
+				        }
+				        reaobj$dt_stat <- message
 				    }else if(code == 5){
 			        	reaobj$dt_stat <- "Error 0005:Duplicate sample name is not allowed."
 			    	}else if(code == 101){
@@ -375,6 +457,11 @@ shinyServer(function(input, output, session){
 	output$dt_status <- renderText({
 		reaobj$dt_stat
 	})
+
+	output$dt_det <- DT::renderDataTable(
+		reaobj$fra_dt_det, rownames = TRUE,
+		options = list(autoWidth = TRUE, pageLength = 10)
+	)
 
 	output$dt_ui_ty_tree <- renderUI({
 		if(input$dt_ty == "NJ-tree"){
@@ -452,8 +539,11 @@ shinyServer(function(input, output, session){
        	}
     )
 
-    output$hm_plot <- renderPlot({
-		reaobj$plot_hm_res
+	output$hm_plot <- renderUI({    
+	    output$plot1 <- renderPlot({
+			isolate({reaobj$plot_hm_res})
+	    })
+	    plotOutput("plot1", height = reaobj$int_hm_plot_height/reaobj$int_hm_plot_width*800+reaobj$int_hm_count*0+100, width=800)
 	})
 
 	output$hm_status <- renderText({
@@ -515,6 +605,11 @@ shinyServer(function(input, output, session){
     output$hm_warntext <- renderText({
     	reaobj$text_hm_warnt
     })
+
+    output$hm_det <- DT::renderDataTable(
+		reaobj$fra_hm_det, rownames = TRUE,
+		options = list(autoWidth = TRUE, pageLength = 10)
+	)
 
     output$lp_status <- renderText({
 		reaobj$lp_stat
@@ -580,7 +675,14 @@ shinyServer(function(input, output, session){
 			    }else if(code == 3){
 			        reaobj$lp_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
-			        reaobj$lp_stat <- "Error 0004:Invalid accession detected."
+			    	message <- "Error 0004:Invalid accession or group detected."
+			        if(text_pub_err_samples != ""){
+						message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
+			        }
+			        if(text_pub_err_groups != ""){
+						message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
+			        }
+			        reaobj$lp_stat <- message
 			    }else if(code == 5){
 			        reaobj$lp_stat <- "Error 0005:Maxium feature tracks must be integer."
 			    }else if(code == 6){
@@ -773,7 +875,14 @@ shinyServer(function(input, output, session){
 		    }else if(code == 3){
 				reaobj$hp_stat <- "Error 0003:Region is too long."
 		    }else if(code == 4){
-		        reaobj$hp_stat <- "Error 0004:Invalid accession detected."
+		        message <- "Error 0004:Invalid accession or group detected."
+		        if(text_pub_err_samples != ""){
+					message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
+		        }
+		        if(text_pub_err_groups != ""){
+					message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
+		        }
+		        reaobj$hp_stat <- message
 		    }else if(code == 5){
 		        reaobj$hp_stat <- "Error 0005:No variation found in current regions."
 		    }else if(code == 6){
@@ -792,7 +901,11 @@ shinyServer(function(input, output, session){
     	## HapMap
     	############################
     	reaobj$hm_err_on <- F
-    	isolate({reaobj$plot_hm_res <- hm_main(input$hm_co, input$hm_ro, input$hm_lon, input$hm_lat, input$hm_mer)})
+    	isolate({reaobj$plot_hm_res <- hm_main(input$hm_co, input$hm_ro, input$hm_mis, input$hm_lon, input$hm_lat, input$hm_mer, input$hm_scal)})
+    	reaobj$fra_hm_det <- fra_hm_detail
+    	reaobj$int_hm_count <- reaobj$int_hm_count + 1
+    	reaobj$int_hm_plot_width <- input$hm_lon[2] - input$hm_lon[1]
+    	reaobj$int_hm_plot_height <- input$hm_lat[2] - input$hm_lat[1]
     	reaobj$text_hm_warnt <- text_hm_NAwarning
     	if(length(reaobj$plot_hm_res) != 1){
     		reaobj$text_hm_para <- paste("Parameter: ", "samples ", input$hm_co, " ; site ", input$hm_ro, sep="")
@@ -815,9 +928,18 @@ shinyServer(function(input, output, session){
 			    }else if(code == 3){
 					reaobj$hm_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
-			        reaobj$hm_stat <- "Error 0004:Invalid accession detected."
+			    	message <- "Error 0004:Invalid accession or group detected."
+			        if(text_pub_err_samples != ""){
+						message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
+			        }
+			        if(text_pub_err_groups != ""){
+						message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
+			        }
+			        reaobj$hm_stat <- message
 			    }else if(code == 5){
 			        reaobj$hm_stat <- "Error 0005:Duplicate sample name is not allowed."
+			    }else if(code == 6){
+			        reaobj$hm_stat <- "Error 0006:Zoom factor must be numeric."
 			    }else if(code == 101){
 			        reaobj$hm_stat <- "Error 0101:No variation found in current regions."
 	    		}
