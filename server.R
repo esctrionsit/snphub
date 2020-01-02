@@ -215,13 +215,13 @@ shinyServer(function(input, output, session){
     )
 
 	output$hp_plot <- renderUI({    
-	    output$plot1 <- renderPlot({
+	    output$plot_hp <- renderPlot({
 			isolate({reaobj$plot_hp_res})
 	    })
 	    if(reaobj$int_hp_plot_flip==20){
-	    	plotOutput("plot1", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot_hp", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }else{
-	    	plotOutput("plot1", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot_hp", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }
 	})
 
@@ -540,10 +540,10 @@ shinyServer(function(input, output, session){
     )
 
 	output$hm_plot <- renderUI({    
-	    output$plot1 <- renderPlot({
+	    output$plot_hm <- renderPlot({
 			isolate({reaobj$plot_hm_res})
 	    })
-	    plotOutput("plot1", height = reaobj$int_hm_plot_height/reaobj$int_hm_plot_width*800+reaobj$int_hm_count*0+100, width=800)
+	    plotOutput("plot_hm", height = reaobj$int_hm_plot_height/reaobj$int_hm_plot_width*800+reaobj$int_hm_count*0+100, width=800)
 	})
 
 	output$hm_status <- renderText({
