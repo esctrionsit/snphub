@@ -11,7 +11,7 @@ envir_check(status)
 
 if(status != 1){ setup <- file_check(status) }
 
-#if(status != 1){ setup <- file_make(status) }
+if(status != 1){ setup <- file_make(status) }
 
 if(status != 1){ file_recheck() }
 
