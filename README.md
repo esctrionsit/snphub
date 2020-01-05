@@ -25,6 +25,7 @@ Alse, these R packages are also **needed**:
 - rjson
 - shiny
 - pegas
+- maps
 - vcfR
 - ape
 - DT
