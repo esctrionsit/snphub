@@ -1,4 +1,4 @@
-source("setup_config.R")
+source("setup.conf")
 source("advanced_config.R")
 source("./setup_scripts/envir_check.R")
 source("./setup_scripts/file_check.R")

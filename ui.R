@@ -1,4 +1,4 @@
-source("./setup_config.R")
+source("./setup.conf")
 source("./advanced_config.R")
 source("./runtime_scripts/public.R")
 source("./runtime_scripts/haplo.R")
