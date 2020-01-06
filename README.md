@@ -4,7 +4,7 @@ SnpHub is a Shiny-based server framework for retrieving, analyzing and visualizi
 
 For more **details**, check [here](https://esctrionsit.github.io/snphub_tutorial/)
 
-For **Docker-encapsulated version**, check [here](https://esctrionsit.github.io/snphub4docker/)
+For **Docker-encapsulated version**, check [here](https://github.com/esctrionsit/snphub4docker)
 
 To get a **quick start**, see [here](https://esctrionsit.github.io/snphub_tutorial/content/Setup/quickstart.html)
 
