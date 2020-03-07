@@ -45,7 +45,7 @@ Only two steps are needed to run on demo data set:
 There are two config files, which are `setup.conf` and `advanced_config.R`.
 
 To setup on your own data set, you would need to:
-- Edit the `setup.config` file, make sure all the paths are correct.
+- Edit the `setup.conf` file, make sure all the paths are correct.
 - Delete the `advanced_config.R`, and rename the `advanced_config_O.R` as `advanced_config.R`. *(Otherwise SnpHub will still run on demo data set)*
 - Use shell command `Rscript setup.R` to setup on your own data.
 - Wait for SnpHub to finish.
