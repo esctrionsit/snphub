@@ -6,7 +6,7 @@ For more **details**, check [our tutorial](https://esctrionsit.github.io/snphub_
 
 For **Docker-encapsulated version**, check [here](https://github.com/esctrionsit/snphub4docker)
 
-To get a **quick start**, see [here](https://esctrionsit.github.io/snphub_tutorial/content/Setup/quickstart.html)
+To get a **quick start**, see [here](https://esctrionsit.github.io/snphub_tutorial/content/Setup/overview.html)
 
 [Here](http://wheat.cau.edu.cn/Wheat_SnpHub_Portal/) are our **live demos**.
 
