@@ -73,7 +73,7 @@ if i == 6:
 	print(o)
 	rand = str(random.randint(0,9))+str(random.randint(0,9))+str(random.randint(0,9))+str(random.randint(0,9))+str(random.randint(0,9))+str(random.randint(0,9))
 	if os.path.exists(tmpath + "tassel3-standalone"):
-		opt = subprocess.Popen(tmpath+"tassel3-standalone/run_pipeline.pl -Xms10g -Xmx100g  -h "+i_path+" -sortPositions -export "o_path" -exportType  VCF",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
+		opt = subprocess.Popen(tmpath+"tassel3-standalone/run_pipeline.pl -Xms10g -Xmx100g  -h "+i_path+" -sortPositions -export "+o_path+" -exportType  VCF",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
 		o = opt.stdout.readlines()
 		print(o)
 		opt = subprocess.Popen("rm -rf "+tmpath+"tassel3-standalone/",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
@@ -85,7 +85,7 @@ elif i == 7:
 	o = opt.stdout.readlines()
 	print(o)
 	if os.path.exists(tmpath + "tassel4-standalone"):
-		opt = subprocess.Popen(tmpath+"tassel4-standalone/run_pipeline.pl -Xms10g -Xmx100g  -h "+i_path+" -sortPositions -export "o_path" -exportType  VCF",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
+		opt = subprocess.Popen(tmpath+"tassel4-standalone/run_pipeline.pl -Xms10g -Xmx100g  -h "+i_path+" -sortPositions -export "+o_path+" -exportType  VCF",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
 		o = opt.stdout.readlines()
 		print(o)
 		opt = subprocess.Popen("rm -rf "+tmpath+"tassel4-standalone/",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
@@ -97,7 +97,7 @@ elif i >=8:
 	o = opt.stdout.readlines()
 	print(o)
 	if os.path.exists(tmpath + "tassel-5-standalone"):
-		opt = subprocess.Popen(tmpath+"tassel-5-standalone/run_pipeline.pl -Xms10g -Xmx100g  -h "+i_path+" -sortPositions -export "o_path" -exportType  VCF",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
+		opt = subprocess.Popen(tmpath+"tassel-5-standalone/run_pipeline.pl -Xms10g -Xmx100g  -h "+i_path+" -sortPositions -export "+o_path+" -exportType  VCF",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
 		o = opt.stdout.readlines()
 		print(o)
 		opt = subprocess.Popen("rm -rf "+tmpath+"tassel-5-standalone/",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
