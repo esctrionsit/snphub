@@ -27,7 +27,7 @@ envir_check <- function(status){
 			{
 				t <- read.table(pipe(paste(i, "--version", sep = " ")), sep = "~")
 			}, error = function(e) {
-				cat(red$bgWhite$bold("[-]") %+% black$bgWhite$bold(" Detect file ") %+% red$bgWhite$bold(i) %+% black$bgWhite$bold(" is not exist.") %+% "\n")
+				cat(red$bgWhite$bold("[-]") %+% black$bgWhite$bold(" Detect program ") %+% red$bgWhite$bold(i) %+% black$bgWhite$bold(" is not exist.") %+% "\n")
 				status <- 1
 			}
 		)
@@ -37,7 +37,7 @@ envir_check <- function(status){
 		{
 			t <- read.table(pipe(path_seqkit), sep = "~")
 		}, error = function(e) {
-			cat(red$bgWhite$bold("[-]") %+% black$bgWhite$bold(" Detect file ") %+% red$bgWhite$bold(path_seqkit) %+% black$bgWhite$bold(" is not exist.") %+% "\n")
+			cat(red$bgWhite$bold("[-]") %+% black$bgWhite$bold(" Detect program ") %+% red$bgWhite$bold(path_seqkit) %+% black$bgWhite$bold(" is not exist.") %+% "\n")
 			status <- 1
 		}
 	)
