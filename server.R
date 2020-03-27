@@ -1,5 +1,12 @@
 shinyServer(function(input, output, session){
 
+	library(ggplot2)
+	library(ggmap)
+	library(dplyr)
+	library(pegas)
+	library(vcfR)
+	library(ape)
+
 	reaobj = reactiveValues()
 	reaobj$snp_stat <- "System Info: Ready"
 	reaobj$hn_stat <- "System Info: Ready"
