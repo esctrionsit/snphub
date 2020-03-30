@@ -58,7 +58,7 @@ tagList(
                     )
                 )
             ),
-            h2("Other system informations"),
+            h2("Other system information"),
             shiny::tags$table (width = "100%",
                 shiny::tags$tr(
                     shiny::tags$th(width = "100%", style="word-break:break-all;",
