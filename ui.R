@@ -28,7 +28,7 @@ tagList(
             )
         ),
         tabPanel("SampleInfo",
-            h2("Avaliable samples"),
+            h2("Available samples"),
             shiny::tags$table (width = "100%",
                 shiny::tags$tr(
                     shiny::tags$th(width = "100%", style="word-break:break-all;",
@@ -39,7 +39,7 @@ tagList(
 
             hr(),
 
-            h2("Avaliable chromosomes"),
+            h2("Available chromosomes"),
             shiny::tags$table (width = "100%",
                 shiny::tags$tr(
                     shiny::tags$th(width = "100%", style="word-break:break-all;",
