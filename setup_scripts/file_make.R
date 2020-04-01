@@ -7,7 +7,7 @@ file_make <- function(status){
 
 			system(paste("/bin/bash setup_scripts/GenomeDatabaseBuild.sh", path_datafolder, name_gff3, name_fasta, sep=" "))
 
-			system(paste("/bin/bash setup_scripts/AnnoWithSnpEff.sh", path_datafolder, path_vcfolder, name_gff3, sep=" "))
+			system(paste("/bin/bash setup_scripts/AnnoWithSnpEff.sh", path_datafolder, path_vcfolder, name_gff3, path_bcftools, sep=" "))
 
 			system(paste("/bin/bash setup_scripts/MakeGeneIndex.sh", path_datafolder, name_gff3, sep=" "))
 

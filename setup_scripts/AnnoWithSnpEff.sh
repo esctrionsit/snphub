@@ -4,6 +4,7 @@ set -euxo pipefail
 Output_path=$1
 vcf_folder=$2
 gff_name=$3
+path_bcftools=$4
 
 tool_path=$(pwd)/Downloads/snpEff/snpEff.jar
 
@@ -15,21 +16,25 @@ cd -
 
 cd $Output_path
 
-echo "Transfering VCF files into BCF..."
+echo "Indexing VCF files..."
 
-bcftools concat ${vcf_real_path}/*.vcf.gz -Ob -o unannotated.bcf.gz
+$path_bcftools index *.vcf.gz
+
+echo "Converting VCF files into BCF..."
+
+$path_bcftools concat ${vcf_real_path}/*.vcf.gz -Ob -o unannotated.bcf.gz
 
 echo "Indexing BCF file..."
 
-bcftools index unannotated.bcf.gz
+$path_bcftools index unannotated.bcf.gz
 
 echo "Annotating BCF file..."
 
-bcftools view unannotated.bcf.gz --threads 4 \
+$path_bcftools view unannotated.bcf.gz --threads 4 \
     | java -jar $tool_path -t SnphubBuilding - \
-    | bcftools view --threads 4 -o output.ann.bcf.gz -Ob
+    | $path_bcftools view --threads 4 -o output.ann.bcf.gz -Ob
 
 echo "Indexing annotated BCF file..."
 
-bcftools index output.ann.bcf.gz
+$path_bcftools index output.ann.bcf.gz
 

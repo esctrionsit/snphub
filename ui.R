@@ -333,7 +333,7 @@ tagList(
         tabPanel("SnpFreq",
             sidebarLayout(
                 sidebarPanel(
-                    textInput("lp_co", "Groups", json_glo_UIsetting$SnpFreq$Samples),
+                    textInput("lp_co", "Groups", json_glo_UIsetting$SnpFreq$Groups),
 
                     helpText("Ex: Group1{Sample1,Sample2},Group2{Sample3,Sample4}"),
 
