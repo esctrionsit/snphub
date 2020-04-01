@@ -28,10 +28,10 @@ fra_glo_geneindex <- read.table(path_geneindex, col.names = c("CHROM", "begin", 
 fra_glo_metadata_raw <- read.table(path_metadata, header = T, as.is = T, fill=T, sep="\t")
 fra_glo_metadata <- fra_glo_metadata_raw[,1:3]
 names(fra_glo_metadata) <-  c("Accession", "Label", "Name")
-fra_glo_groupdata <- read.table(path_groupdata, col.names = c("Group", "Name"), header = F, as.is = T)
+fra_glo_groupdata <- read.table(path_groupdata, col.names = c("Group", "Name"), header = F, as.is = T, sep="\t")
 fra_glo_avalichrnames <- read.table(path_fa_index, col.names = c("CHROM", "Length", "V1", "V2", "V3"), as.is = T)
 lis_glo_avalichrnames <- fra_glo_avalichrnames$CHROM
-fra_glo_samloc <- read.table(path_sam_location, header = F, stringsAsFactors = F, col.names = c("Acession", "location", "lon", "lat"))
+fra_glo_samloc <- read.table(path_sam_location, header = F, stringsAsFactors = F, col.names = c("Acession", "location", "lon", "lat"), sep="\t")
 if(!is.na(path_sysinfo)){
     fra_glo_sysdata <- pub_read_sysinfo(path_sysinfo)
 }else{
