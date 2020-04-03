@@ -2,6 +2,8 @@
 
 SnpHub is a Shiny-based server framework for retrieving, analyzing and visualizing the large genomic variations data in a lab.
 
+[Our homepage](http://guoweilong.github.io/SnpHub/)
+
 For more **details**, check [our tutorial](https://esctrionsit.github.io/snphub_tutorial/)
 
 For **Docker-encapsulated version**, check [here](https://github.com/esctrionsit/snphub4docker)
