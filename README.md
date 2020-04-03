@@ -16,14 +16,15 @@ To get a **quick deploy**, see [here](https://esctrionsit.github.io/snphub_tutor
 
 ## Environment request
 
-To run the SnpHub, make sure these softwares are **already** installed:
-- samtools
-- bcftools
+To run the SnpHub, make sure the following software programs are **already** installed:
+- samtools (≥ **v1.4**)
+- bcftools (≥ **v1.8**)
 - seqkit
-- tabix
+- tabix (≥ **v1.6**)
 
-Alse, these R packages are also **needed**:
+Also, the following R packages are also prerequisites:
 - ggplot2
+- crayon
 - ggmap
 - dplyr
 - rjson
