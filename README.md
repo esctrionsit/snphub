@@ -6,7 +6,7 @@ For more **details**, check [our tutorial](https://esctrionsit.github.io/snphub_
 
 For **Docker-encapsulated version**, check [here](https://github.com/esctrionsit/snphub4docker)
 
-To get a **quick start**, see [here](https://esctrionsit.github.io/snphub_tutorial/content/Setup/overview.html)
+To get a **quick deploy**, see [here](https://esctrionsit.github.io/snphub_tutorial/content/Setup/quick_deploy.html)
 
 [Here](http://wheat.cau.edu.cn/Wheat_SnpHub_Portal/) are our **live demos**.
 
@@ -34,20 +34,34 @@ Alse, these R packages are also **needed**:
 
 ## Demo
 
-Only two steps are needed to run on demo data set:
-- Using command `git clone https://github.com/esctrionsit/snphub` to clone SnpHub to local.
-- Using command like `R -e "shiny::runApp('./snphub', port=5000, host='0.0.0.0')"` to run on demo data set. *(Or copy the SnpHub into your `shiny-server app folder`)*
+Two steps are needed to run on demo data set:
+
+- Using `git` to clone SnpHub to local.
+```sh
+git clone https://github.com/esctrionsit/snphub
+```
+
+- Using `R` to run on demo data set. *(Or copy the SnpHub into your `shiny-server app folder`)*
+```sh
+R -e "shiny::runApp('./snphub', port=5000, host='0.0.0.0')"
+```
 
 *Make sure that `samtools`, `bcftools`, `seqkit` and `tabix` are added to system PATH. Otherwise, `tool application paths` part in `setup.conf` is needed to change to fit.*
 
 ## Setup on own data set
 
-There are two config files, which are `setup.conf` and `advanced_config.R`.
+### Fulfill config file
 
-To setup on your own data set, you would need to:
-- Edit the `setup.conf` file, make sure all the paths are correct.
-- Delete the `advanced_config.R`, and rename the `advanced_config_O.R` as `advanced_config.R`. *(Otherwise SnpHub will still run on demo data set)*
-- Use shell command `Rscript setup.R` to setup on your own data.
-- Wait for SnpHub to finish.
+Basic config file is named `setup.conf`, fulfill it and then run command:
+
+``` sh
+Rscript ./setup.R
+```
+
+Check [configuration](https://esctrionsit.github.io/snphub_tutorial/content/Setup/configuration.html) for more details about `setup.conf`.
+
+Check [file format](https://esctrionsit.github.io/snphub_tutorial/content/Setup/file-formats.html) for more details about required file formats.
+
+If it is your **first time** to set up `SnpHub`, you need to **delete** `advanced_config.R`, and then **rename** `advanced_config_O.R` to `advanced_config.R`.
 
 For more **details**, check [our tutorial](https://esctrionsit.github.io/snphub_tutorial/)

@@ -14,18 +14,7 @@ tagList(
     includeCSS("style.css"),
     navbarPage("",
         tabPanel(span("SnpHub", style="font-family:Arial;font-size:18px;font-weight:450;"),
-            includeHTML("include.html"),
-            shiny::tags$table (width = "100%",
-                shiny::tags$tr(
-                    shiny::tags$th(width = "20%"
-                    ),
-                    shiny::tags$th(width = "60%",
-                        imageOutput("logo")
-                    ),
-                    shiny::tags$th(width = "20%"
-                    )
-                )
-            )
+            includeHTML("include.html")
         ),
         tabPanel("SampleInfo",
             h2("Available samples"),
