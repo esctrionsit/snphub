@@ -205,7 +205,7 @@ pub_check_sample_name <- function(user_sam, support_raw=F) {
         return(c())
     }
     for(i in 1:length(tmp_res)){
-        if(support_raw && grepl("#RAW", tmp_res[i])){
+        if(support_raw && "#RAW"==tmp_res[i]){
             tmp <- "#RAW"
             res <- c(res, tmp)
             next
@@ -225,7 +225,7 @@ pub_check_sample_name <- function(user_sam, support_raw=F) {
     }
 
     for(i in 1:length(res)){
-        if(support_raw && res[i]=="#RAW"){
+        if(support_raw && !is.na(res[i]) && res[i]=="#RAW"){
             next
         }
         tmp <- as.character(fra_glo_metadata[which(fra_glo_metadata$Label == res[i]),]$Accession)
