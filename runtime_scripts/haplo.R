@@ -124,7 +124,11 @@ hp_trans_data <- function(hp_sam, hp_gro) {
         }
     }
 
-	fra_hp_orivcf <<- as.data.frame(t(fra_hp_orivcf[,-(1:2)]))
+	if(nrow(fra_hp_orivcf) != 1){
+        fra_hp_orivcf <<- as.data.frame(t(fra_hp_orivcf[,-(1:2)]))
+    }else{
+        fra_hp_orivcf <<- as.data.frame(t(t(fra_hp_orivcf[,-(1:2)])))
+    }
 	colnames(fra_hp_orivcf) <<- new_row_name
     
 	fra_hp_orivcf$Sample <<- c("GENE", "MUTYPE", "_", hp_sam)
