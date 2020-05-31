@@ -38,10 +38,14 @@ dt_fetch_data <- function(dt_chr, dt_beg, dt_end, dt_sam) {
     
 }
 
-hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam, maf) {
+hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam, maf, maf_igm) {
     shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
     if(maf != "0"){
-        shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
+        if(maf_igm=="Yes"){
+            shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
+        }else{
+            shell <- paste(shell, " -e 'MAC<", as.character(2*length(hp_sam)*as.numeric(maf)), " || ", "N_MISSING==", as.character(length(hp_sam)), "' ", sep="")
+        }
     }
     shell <- paste(shell, " -r ", sep = "")
     for(i in 1:length(hp_chr)){
@@ -156,7 +160,7 @@ lp_fetch_data <- function(chr, beg, end, sam){
     0
 }
 
-snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", bso="No", mlr="1") {
+snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", maf_igm="Yes", bso="No", mlr="1") {
     shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
     if(ty == "snp"){
         shell <- paste(shell, " -v snps ", sep = "")
@@ -176,7 +180,11 @@ snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", 
     }
     shell <- paste(shell, " -s ", paste(fet_sam, collapse=","), sep = "")
     if(maf != "0"){
-        shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
+        if(maf_igm=="Yes"){
+            shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
+        }else{
+            shell <- paste(shell, " -e 'MAC<", as.character(2*length(fet_sam)*as.numeric(maf)), " || ", "N_MISSING==", as.character(length(fet_sam)), "' ", sep="")
+        }
     }
     if(mlr != "1"){
         shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")

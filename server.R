@@ -98,6 +98,15 @@ shinyServer(function(input, output, session){
 
 	output$snp_ui_3 <- renderUI({
 		if(reaobj$snp_ui_on){
+			radioButtons("snp_maf_igm", "Ignore missing allele in MAF filtering?",
+                        choices = list("Yes", "No"),
+                        selected = "Yes",
+                        inline = T)
+		}
+	})
+
+	output$snp_ui_4 <- renderUI({
+		if(reaobj$snp_ui_on){
 			radioButtons("snp_bso", "Biallelic sites only",
                                 choices = list("Yes","No"),
                                 selected = "No",
@@ -105,7 +114,7 @@ shinyServer(function(input, output, session){
 		}
 	})
 
-	output$snp_ui_4 <- renderUI({
+	output$snp_ui_5 <- renderUI({
 		if(reaobj$snp_ui_on){
 			textInput("snp_mlr", "Maximum missing rate", "1")
 		}
@@ -118,7 +127,7 @@ shinyServer(function(input, output, session){
 	output$snp_restable <- renderTable({
         if(input$snp_run){
         	isolate({
-        		reaobj$fra_snp_res <- snp_main(input$snp_ty, input$snp_oi, input$snp_co_t, input$snp_co_f, input$snp_co_e, input$snp_ro, input$snp_ro_ext, input$snp_maf, input$snp_bso, input$snp_mlr)
+        		reaobj$fra_snp_res <- snp_main(input$snp_ty, input$snp_oi, input$snp_co_t, input$snp_co_f, input$snp_co_e, input$snp_ro, input$snp_ro_ext, input$snp_maf, input$snp_maf_igm, input$snp_bso, input$snp_mlr)
         		reaobj$text_snp_para <- text_snp_currpara
         		if(names(reaobj$fra_snp_res) == c("Info")){
         			reaobj$snp_stat <- as.character(reaobj$fra_snp_res[1,1])
@@ -226,9 +235,9 @@ shinyServer(function(input, output, session){
 			isolate({reaobj$plot_hp_res})
 	    })
 	    if(reaobj$int_hp_plot_flip==20){
-	    	plotOutput("plot_hp", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot_hp", height = reaobj$int_hp_plot_height/reaobj$int_hp_plot_width*(1000-200)+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }else{
-	    	plotOutput("plot_hp", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*1000+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
+	    	plotOutput("plot_hp", height = reaobj$int_hp_plot_width/reaobj$int_hp_plot_height*(1000-200)+350+reaobj$int_hp_plot_cluster*0+reaobj$int_hp_plot_flip*0, width=1000, brush = brushOpts("snp_brush", delay = 500, delayType ="debounce", resetOnNew = T))
 	    }
 	})
 
@@ -854,7 +863,7 @@ shinyServer(function(input, output, session){
     	############################
     	reaobj$hp_err_on <- F
     	isolate({
-    		reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext, input$hp_cluster, input$hp_flip, input$hp_maf)
+    		reaobj$plot_hp_res <- hp_main(input$hp_co, input$hp_ro, input$hp_ro_ext, input$hp_cluster, input$hp_flip, input$hp_maf, input$hp_maf_igm)
     	})
     	if(input$hp_cluster == "Yes"){
     		reaobj$int_hp_plot_cluster <- 0
@@ -868,8 +877,8 @@ shinyServer(function(input, output, session){
     	}
     	reaobj$text_hp_para <- text_hp_currpara
     	if(length(reaobj$plot_hp_res) != 1){
-	    	reaobj$int_hp_plot_width <- nrow(fra_hp_orivcf)*15 + 160
-	    	reaobj$int_hp_plot_height <- (ncol(fra_hp_orivcf)-1)*20 + 150
+	    	reaobj$int_hp_plot_width <- nrow(fra_hp_orivcf)
+	    	reaobj$int_hp_plot_height <- (ncol(fra_hp_orivcf)-1)
 	    	reaobj$hp_stat <- "System Info: Done"
 	    }else{
 	    	reaobj$text_hp_para <- "Parameter: "

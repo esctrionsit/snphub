@@ -1,4 +1,4 @@
-hp_main <- function(co, ro, ext="0", cluster="Yes", flip="Yes", maf="0") {
+hp_main <- function(co, ro, ext="0", cluster="Yes", flip="Yes", maf="0", maf_igm="Yes") {
     withProgress(message = 'Drawing', detail = "  Drawing Haplotype Heatmap plot...", value = 5, {
         co <- paste(strsplit(co, split = " ")[[1]], collapse="")
         text_hp_currpara <<- ""
@@ -24,7 +24,7 @@ hp_main <- function(co, ro, ext="0", cluster="Yes", flip="Yes", maf="0") {
 
         unique_sam <- pub_unique_sample(hp_sam)
         
-        hp_fetch_data(hp_chr, hp_beg, hp_end, unique_sam, maf)
+        hp_fetch_data(hp_chr, hp_beg, hp_end, unique_sam, maf, maf_igm)
 
         if(nrow(fra_hp_orivcf) == 0) { return(hp_error_message(5)) }
 
@@ -80,7 +80,6 @@ hp_trans_data <- function(hp_sam, hp_gro) {
     tmp_name <- c(tmp_name[1:4], "_", tmp_name[5:length(tmp_name)])
     names(fra_hp_orivcf) <<- tmp_name
 
-
 	fra_hp_orivcf <<- as.matrix(fra_hp_orivcf)
 
 	fra_hp_orivcf[which(fra_hp_orivcf %in% lis_hp_code_missing)] <<- "-1"
@@ -124,13 +123,13 @@ hp_trans_data <- function(hp_sam, hp_gro) {
         }
     }
 
-	if(nrow(fra_hp_orivcf) != 1){
+    if(nrow(fra_hp_orivcf) != 1){
         fra_hp_orivcf <<- as.data.frame(t(fra_hp_orivcf[,-(1:2)]))
     }else{
         fra_hp_orivcf <<- as.data.frame(t(t(fra_hp_orivcf[,-(1:2)])))
     }
 	colnames(fra_hp_orivcf) <<- new_row_name
-    
+
 	fra_hp_orivcf$Sample <<- c("GENE", "MUTYPE", "_", hp_sam)
     fra_hp_orivcf$Group <<- hp_gro$Group
 }

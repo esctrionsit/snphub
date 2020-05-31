@@ -1,4 +1,4 @@
-snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No", mlr = "1"){
+snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0", maf_igm="Yes", bso= "No", mlr = "1"){
     withProgress(message = 'Please wait', detail = "Processing...", value = 5, {
         co_t <- paste(strsplit(co_t, split = " ")[[1]], collapse="")
         co_f <- paste(strsplit(co_f, split = " ")[[1]], collapse="")
@@ -30,7 +30,7 @@ snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0" , bso= "No",
         if(is.na(as.numeric(mlr))) { return(snp_error_message(9)) }
 
         unique_sam <- pub_unique_sample(sel_sam)
-        shell <- snp_fetch_data(oi, sel_chr, sel_beg, sel_end, ty, unique_sam, maf, bso, mlr)
+        shell <- snp_fetch_data(oi, sel_chr, sel_beg, sel_end, ty, unique_sam, maf, maf_igm, bso, mlr)
         #return(data.frame(c(shell)))
 
         if(nrow(fra_snp_orivcf) == 0) { return(snp_error_message(6)) }

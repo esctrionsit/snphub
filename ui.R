@@ -99,6 +99,8 @@ tagList(
 
                     uiOutput("snp_ui_4"),
 
+                    uiOutput("snp_ui_5"),
+
                     hr(),
 
                     actionButton("snp_run", "Run"),
@@ -138,6 +140,11 @@ tagList(
                         inline = T),
 
                     textInput("hp_maf", "Minimum allele frequency (MAF)", "0"),
+
+                    radioButtons("hp_maf_igm", "Ignore missing allele in MAF filtering?",
+                        choices = list("Yes", "No"),
+                        selected = "Yes",
+                        inline = T),
 
                     actionButton("hp_run", "Draw"),
 
