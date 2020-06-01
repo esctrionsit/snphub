@@ -40,13 +40,6 @@ dt_fetch_data <- function(dt_chr, dt_beg, dt_end, dt_sam) {
 
 hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam, maf, maf_igm) {
     shell <- paste(path_bcftools, " view ", path_vcf, sep = "")
-    if(maf != "0"){
-        if(maf_igm=="Yes"){
-            shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
-        }else{
-            shell <- paste(shell, " -e 'MAC<", as.character(2*length(hp_sam)*as.numeric(maf)), " || ", "N_MISSING==", as.character(length(hp_sam)), "' ", sep="")
-        }
-    }
     shell <- paste(shell, " -r ", sep = "")
     for(i in 1:length(hp_chr)){
         if(i == length(hp_chr)){
@@ -57,6 +50,13 @@ hp_fetch_data <- function(hp_chr, hp_beg, hp_end, hp_sam, maf, maf_igm) {
     }
     shell <- paste(shell, " -s ", paste(hp_sam, collapse=","), sep = "")
     shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
+    if(maf != "0"){
+        if(maf_igm=="Yes"){
+            shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
+        }else{
+            shell <- paste(shell, " -e 'MAC<", as.character(2*length(hp_sam)*as.numeric(maf)), " || ", "N_MISSING==", as.character(length(hp_sam)), "' ", sep="")
+        }
+    }
     shell <- paste(shell, "-f '%CHROM\\t%POS\\t%ANN[\\t%GT]\\n' ", sep = "")
 
     bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
@@ -179,6 +179,10 @@ snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", 
         }
     }
     shell <- paste(shell, " -s ", paste(fet_sam, collapse=","), sep = "")
+    if(mlr != "1"){
+        shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")
+    }
+    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
     if(maf != "0"){
         if(maf_igm=="Yes"){
             shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
@@ -186,10 +190,6 @@ snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", 
             shell <- paste(shell, " -e 'MAC<", as.character(2*length(fet_sam)*as.numeric(maf)), " || ", "N_MISSING==", as.character(length(fet_sam)), "' ", sep="")
         }
     }
-    if(mlr != "1"){
-        shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")
-    }
-    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
     shell <- paste(shell, "-f '%CHROM\\t%POS", sep="")
     if("ANN" %in% oi){
         shell <- paste(shell, "\\t%ANN", sep="")
