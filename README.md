@@ -14,8 +14,12 @@ To start a **general setup**, see [here](https://esctrionsit.github.io/snphub_tu
 
 ![](SnpHub.jpg)
 
->Please cite SnpHub as follow:
->Wenxi Wang, Zihao Wang, Xintong Li, Zhongfu Ni, Zhaorong Hu, Mingming Xin, Huiru Peng, Yingyin Yao, Qixin Sun, Weilong Guo, SnpHub: an easy-to-set-up web server framework for exploring large-scale genomic variation data in the post-genomic era with applications in wheat, GigaScience, Volume 9, Issue 6, June 2020, giaa060, https://doi.org/10.1093/gigascience/giaa060
+## Citation
+
+Please cite SnpHub as follow:
+
+Wenxi Wang, Zihao Wang, Xintong Li, Zhongfu Ni, Zhaorong Hu, Mingming Xin, Huiru Peng, Yingyin Yao, Qixin Sun, Weilong Guo, SnpHub: an easy-to-set-up web server framework for exploring large-scale genomic variation data in the post-genomic era with applications in wheat, GigaScience, Volume 9, Issue 6, June 2020, giaa060, https://doi.org/10.1093/gigascience/giaa060
+
 
 ## Environment request
 
