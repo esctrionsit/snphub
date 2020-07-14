@@ -35,7 +35,7 @@ ns_readdata <- function(ty1, ty2, samp, ns_ge, ro){
             if(ty1 != "both"){
                 shell <- paste(shell, " -e \'TYPE!=\"", ty1, "\"\' ", sep = "")
             }
-            if(ty2 != "all") { shell <- paste(shell, " -e \'GT!=\"hom\"\' ", sep = "") } 
+            if(ty2 != "all") { shell <- paste(shell, " -e \'GT==\"het\"\' ", sep = "") } 
             shell <- paste(shell, " |", path_seqkit, " seq", sep = "")
         }
         #fra_ns_finalres <<- rbind(fra_ns_finalres, data.frame(c(shell)))
