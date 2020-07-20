@@ -179,10 +179,10 @@ snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", 
         }
     }
     shell <- paste(shell, " -s ", paste(fet_sam, collapse=","), sep = "")
+    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
     if(mlr != "1"){
         shell <- paste(shell, " -e 'F_MISSING>", mlr, "' ", sep="")
     }
-    shell <- paste(shell, " | ", path_bcftools, " query ", sep="")
     if(maf != "0"){
         if(maf_igm=="Yes"){
             shell <- paste(shell, " -e 'MAF<", maf, "' ", sep="")
