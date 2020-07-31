@@ -1,5 +1,8 @@
 hm_main <- function(co, ro, mis, lon, lat, mer, scal){
   withProgress(message = 'Drawing', detail = "  Drawing HapMap...", value = 5, {
+    library(ggplot2)
+    library(ggmap)
+
     co <- paste(strsplit(co, split = " ")[[1]], collapse="")
     fra_hm_detail <<- data.frame()
     if(is.na(as.numeric(scal)) || as.numeric(scal) < 0) { return(hm_error_message(6)) }

@@ -1,5 +1,8 @@
 hn_main <- function(co, ro, anno, ext) {
     withProgress(message = 'Drawing', detail = "  Drawing Haplotype Network plot...", value = 5, {
+        library(pegas)
+        library(vcfR)
+
         co <- paste(strsplit(co, split = " ")[[1]], collapse="")
 
         fra_hn_detail <<- data.frame()
@@ -80,7 +83,7 @@ hn_draw_plot <- function(groupf, co, ro, ext, anno){
     layout(mat = matrix(c(2,1,3),ncol = 1), heights = c(1,5,1))
 
     # main plot
-    par(mar=c(0,3,0,3))
+    par(mar=c(9,9,9,9))
     color <- c("#8DD3C7", "#FFFFB3", "#BEBADA", "#FB8072", "#80B1D3", "#FDB462", "#B3DE69", "#FCCDE5", "#D9D9D9", "#BC80BD")
     pal <- color[1:ncol(hap.pies)]
     plotObj <- plot(hap.net, size=attr(hap.net, "freq")^0.5, bg=pal, pie=hap.pies, scale.ratio = 2, fast = F, show.mutation = 3)

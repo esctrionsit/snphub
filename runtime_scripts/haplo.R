@@ -1,5 +1,7 @@
 hp_main <- function(co, ro, ext="0", cluster="Yes", flip="Yes", maf="0", maf_igm="Yes") {
     withProgress(message = 'Drawing', detail = "  Drawing Haplotype Heatmap plot...", value = 5, {
+        library(ggplot2)
+
         co <- paste(strsplit(co, split = " ")[[1]], collapse="")
         text_hp_currpara <<- ""
 

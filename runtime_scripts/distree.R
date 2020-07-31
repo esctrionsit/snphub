@@ -1,5 +1,8 @@
 dt_main <- function(ty, ty_tree, dbr, co, ro, ext = "0", del = "Yes"){
     withProgress(message = 'Drawing', detail = "  Drawing PhyloTree plot...", value = 5, {
+        library(vcfR)
+        library(ape)
+
         co <- paste(strsplit(co, split = " ")[[1]], collapse="")
         fra_dt_detail <<- data.frame()
         text_dt_currpara <<- ""
