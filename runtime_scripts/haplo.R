@@ -307,21 +307,21 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
             levels(df$Type)[levels(df$Type)=="-2.9"] <- assist_factor[count_assist]
         }
         if(count_assist>=1){
-            color_lis <- c(color_lis, "white")
+            color_lis <- c(color_lis, "white" = "white")
             tmp_lis_name <- names(color_lis)
             tmp_lis_name[length(tmp_lis_name)] <- assist_factor[1]
             names(color_lis) <- tmp_lis_name
         }
         color_lis <- c(color_lis, color_lis_L)
         if(count_assist>=2){
-            color_lis <- c(color_lis, "white")
+            color_lis <- c(color_lis, "white" = "white")
             tmp_lis_name <- names(color_lis)
             tmp_lis_name[length(tmp_lis_name)] <- assist_factor[2]
             names(color_lis) <- tmp_lis_name
         }
         color_lis <- c(color_lis, color_lis_M)
         if(count_assist>=3){
-            color_lis <- c(color_lis, "white")
+            color_lis <- c(color_lis, "white" = "white")
             tmp_lis_name <- names(color_lis)
             tmp_lis_name[length(tmp_lis_name)] <- assist_factor[3]
             names(color_lis) <- tmp_lis_name
@@ -379,7 +379,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         if(count_assist > count_1){
             if(count_1>0){
                     for(i in 1:count_1){
-                    color_lis <- c(color_lis, "white")
+                    color_lis <- c(color_lis, "white" = "white")
                     tmp_lis_name <- names(color_lis)
                     tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                     names(color_lis) <- tmp_lis_name
@@ -387,7 +387,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
             }
         }else{
             for(i in 1:count_assist){
-                color_lis <- c(color_lis, "white")
+                color_lis <- c(color_lis, "white" = "white")
                 tmp_lis_name <- names(color_lis)
                 tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                 names(color_lis) <- tmp_lis_name
@@ -400,7 +400,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         if(count_assist > count_1){
             for(i in (count_1+1):count_assist){
                 print(i)
-                color_lis <- c(color_lis, "white")
+                color_lis <- c(color_lis, "white" = "white")
                 tmp_lis_name <- names(color_lis)
                 tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                 names(color_lis) <- tmp_lis_name
@@ -457,7 +457,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         if(count_assist > count_1){
             if(count_1 > 0){
                     for(i in 1:count_1){
-                    color_lis <- c(color_lis, "white")
+                    color_lis <- c(color_lis, "white" = "white")
                     tmp_lis_name <- names(color_lis)
                     tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                     names(color_lis) <- tmp_lis_name
@@ -465,7 +465,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
             }
         }else{
             for(i in 1:count_assist){
-                color_lis <- c(color_lis, "white")
+                color_lis <- c(color_lis, "white" = "white")
                 tmp_lis_name <- names(color_lis)
                 tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                 names(color_lis) <- tmp_lis_name
@@ -475,7 +475,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         color_lis <- c(color_lis, color_lis_M)
         if(count_assist > count_1){
             for(i in (count_1+1):count_assist){
-                color_lis <- c(color_lis, "white")
+                color_lis <- c(color_lis, "white" = "white")
                 tmp_lis_name <- names(color_lis)
                 tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                 names(color_lis) <- tmp_lis_name
@@ -530,7 +530,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         if(count_assist > count_1){
             if(count_1 > 0){
                     for(i in 1:count_1){
-                    color_lis <- c(color_lis, "white")
+                    color_lis <- c(color_lis, "white" = "white")
                     tmp_lis_name <- names(color_lis)
                     tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                     names(color_lis) <- tmp_lis_name
@@ -538,7 +538,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
             }
         }else{
             for(i in 1:count_assist){
-                color_lis <- c(color_lis, "white")
+                color_lis <- c(color_lis, "white" = "white")
                 tmp_lis_name <- names(color_lis)
                 tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                 names(color_lis) <- tmp_lis_name
@@ -547,7 +547,7 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         color_lis <- c(color_lis, color_lis_L)
         if(count_assist > count_1){
             for(i in (count_1+1):count_assist){
-                color_lis <- c(color_lis, "white")
+                color_lis <- c(color_lis, "white" = "white")
                 tmp_lis_name <- names(color_lis)
                 tmp_lis_name[length(tmp_lis_name)] <- assist_factor[i]
                 names(color_lis) <- tmp_lis_name
