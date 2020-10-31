@@ -120,7 +120,7 @@ shinyServer(function(input, output, session){
 	output$snp_restable <- renderTable({
         if(input$snp_run){
         	isolate({
-        		reaobj$fra_snp_res <- snp_main(input$snp_ty, input$snp_oi, input$snp_co_t, input$snp_co_f, input$snp_co_e, input$snp_ro, input$snp_ro_ext, input$snp_maf, input$snp_maf_igm, input$snp_bso, input$snp_mlr)
+        		reaobj$fra_snp_res <- snp_main(input$snp_ty, input$snp_oi, input$snp_co_t, input$snp_co_f, input$snp_co_e, input$snp_ro, input$snp_ro_ext, reaobj$snp_ui_on, input$snp_maf, input$snp_maf_igm, input$snp_bso, input$snp_mlr)
         		reaobj$text_snp_para <- text_snp_currpara
         		if(names(reaobj$fra_snp_res) == c("Info")){
         			reaobj$snp_stat <- as.character(reaobj$fra_snp_res[1,1])

@@ -1,10 +1,10 @@
-snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, maf ="0", maf_igm="Yes", bso= "No", mlr = "1"){
+snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, ui_on, maf ="0", maf_igm="Yes", bso= "No", mlr = "1"){
     withProgress(message = 'Please wait', detail = "Processing...", value = 5, {
         co_t <- paste(strsplit(co_t, split = " ")[[1]], collapse="")
         co_f <- paste(strsplit(co_f, split = " ")[[1]], collapse="")
         co_e <- paste(strsplit(co_e, split = " ")[[1]], collapse="")
         
-        if(is.null(bso)){
+        if(!ui_on){
              maf = "0"
              bso = "No"
              mlr = "1"
