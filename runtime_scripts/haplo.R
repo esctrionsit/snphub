@@ -207,19 +207,19 @@ hp_draw_plot <- function(co, ro, ext, cluster, flip) {
         color_lis_L <- c(color_lis_L, "Missing"="gray95")
     }
 	if("0" %in% df$Type){
-	   levels(df$Type)[levels(df$Type)=="0"] <- "None"
+	   levels(df$Type)[levels(df$Type)=="0"] <- "Ref"
        count_L <- count_L+1
-       color_lis_L <- c(color_lis_L, "None"="grey")
+       color_lis_L <- c(color_lis_L, "Ref"="grey")
     }
     if("0.5" %in% df$Type){
-	   levels(df$Type)[levels(df$Type)=="0.5"] <- "Heter"
+	   levels(df$Type)[levels(df$Type)=="0.5"] <- "Heter_Mutation"
        count_L <- count_L+1
-       color_lis_L <- c(color_lis_L, "Heter"="deepskyblue")
+       color_lis_L <- c(color_lis_L, "Heter_Mutation"="deepskyblue")
     }
     if("1" %in% df$Type){
-	   levels(df$Type)[levels(df$Type)=="1"] <- "Homo"
+	   levels(df$Type)[levels(df$Type)=="1"] <- "Homo_Mutation"
        count_L <- count_L+1
-       color_lis_L <- c(color_lis_L, "Homo"="blue")
+       color_lis_L <- c(color_lis_L, "Homo_Mutation"="blue")
     }
     if("2.0" %in% df$Type){
         levels(df$Type)[levels(df$Type)=="2.0"] <- "others"
