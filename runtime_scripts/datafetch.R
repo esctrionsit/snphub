@@ -207,7 +207,7 @@ snp_fetch_data <- function(oi, sel_chr, sel_beg, sel_end, ty, fet_sam, maf="0", 
 
     bcftools_leng <- read.table(pipe(paste(shell, " | wc -l")), header = F, comment.char = "", as.is = T)
     if(bcftools_leng[1,1] != "0"){
-        fra_snp_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T)
+        fra_snp_orivcf <<- read.table(pipe(shell), header = F, comment.char = "#", as.is = T, colClasses = "character")
         if("ANN" %in% oi){
             names(fra_snp_orivcf) <<- c("CHROM", "POS", "ANN", "REF", "ALT", fet_sam)
         }else{
