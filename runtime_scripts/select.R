@@ -57,7 +57,7 @@ snp_main <- function(ty, oi, co_t, co_f, co_e, ro, ro_ext, ui_on, maf ="0", maf_
             snp_finalres_header_mapping(c("CHROM", "POS", "REF", "ALT", sel_sam))
         }
 
-        text_snp_currpara <<- paste("Parameter: ", ty, " ; ", ro, " ; flask length ", ro_ext, sep="")
+        text_snp_currpara <<- paste("Parameter: ", ty, " ; ", ro, " ; flanking length ", ro_ext, sep="")
 
         fra_snp_finalres
     })
