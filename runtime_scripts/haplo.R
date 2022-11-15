@@ -38,7 +38,7 @@ hp_main <- function(co, ro, ext="0", cluster="Yes", flip="Yes", maf="0", maf_igm
 
         hp_trans_data(hp_sam, hp_gro)
 
-        text_hp_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, sep="")
+        text_hp_currpara <<- paste("Parameter: ", ro, " ; flanking length ", ext, sep="")
 
         p <- hp_draw_plot(co, ro, ext, cluster, flip)  
         #return
