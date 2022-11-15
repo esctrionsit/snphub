@@ -39,7 +39,7 @@ hn_main <- function(co, ro, anno, ext) {
 
         p <- hn_draw_plot(hn_gro, co, ro, ext, anno)
 
-        text_hn_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, sep="")
+        text_hn_currpara <<- paste("Parameter: ", ro, " ; flanking length ", ext, sep="")
 
         p
     })
