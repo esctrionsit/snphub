@@ -40,7 +40,7 @@ dt_main <- function(ty, ty_tree, dbr, co, ro, ext = "0", del = "Yes"){
         }else{
             tmp <- ty_tree
         }
-        text_dt_currpara <<- paste("Parameter: ", ro, " ; flask length ", ext, " ; ", tmp, sep="")
+        text_dt_currpara <<- paste("Parameter: ", ro, " ; flanking length ", ext, " ; ", tmp, sep="")
         #return
         p
     })
