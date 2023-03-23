@@ -1,15 +1,16 @@
 file_check <- function(status){
 	cat(blue$bgWhite$bold("[ ] Begining the first round file checking") %+% "\n")
 
-	file_sub_list <- c(path_fasta, path_raw_gff3, path_metadata, path_groupdata, path_sam_location)
+	file_sub_list <- c(name_fasta, name_gff3, name_metadata, name_groupdata, name_sam_location)
 	for(i in file_sub_list){
-		if(!file.exists(i)){
+		if(!file.exists(paste(path_datafolder, "/", i, sep=""))){
 			cat(red$bgWhite$bold("[-]") %+% black$bgWhite$bold(" Detect file ") %+% red$bgWhite$bold(i) %+% black$bgWhite$bold(" is not exist or its path is wrong.") %+% "\n")
 			status <- 1
 		}
 	}
 
 	# metadata
+	path_metadata <- paste(path_datafolder, "/", name_metadata, sep="")
 	is_correct <- tryCatch(
 		{
 			fra_glo_metadata <- read.table(path_metadata, header = T, as.is = T, fill=T, sep="\t")
@@ -43,6 +44,7 @@ file_check <- function(status){
 		}
 	}
 	# groupdata
+	path_groupdata <- paste(path_datafolder, "/", name_groupdata, sep="")
 	is_correct <- tryCatch(
 		{
 			fra_glo_groupdata <- read.table(path_groupdata, col.names = c("Group", "Name"), header = F, as.is = T)
@@ -68,7 +70,7 @@ file_check <- function(status){
 			for(j in s){
 				if(!(j %in% fra_glo_metadata$AccessionName)){
 					cat(red$bgWhite$bold("[-]") %+% black$bgWhite$bold(" Detect file ") %+% black$bgWhite$bold(path_groupdata) %+% black$bgWhite$bold(" is not correct.") %+% "\n"
-						%+% black$bgWhite$bold("    ") %+% black$bgWhite$bold("Wrong sample label in group ") %+% red$bgWhite$bold(fra_glo_groupdata[i, 1]) %+% "\n" 
+						%+% black$bgWhite$bold("    ") %+% black$bgWhite$bold("Wrong sample label ") %+% black$bgWhite$bold(j) %+% black$bgWhite$bold(" in group ") %+% red$bgWhite$bold(fra_glo_groupdata[i, 1]) %+% "\n" 
 						)
 					status <- 1
 				}
