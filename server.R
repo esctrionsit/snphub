@@ -543,7 +543,11 @@ shinyServer(function(input, output, session){
        			png(file, width = as.numeric(input$dt_dwi)*100, height = as.numeric(input$dt_dth)*100)
        		}
        		
-       		isolate({dt_main(input$dt_ty, input$dt_tty, input$dt_dbr, input$dt_co, input$dt_ro, input$dt_ro_ext)})
+       		isolate({plot_dt_res <- dt_main(input$dt_ty, input$dt_tty, input$dt_dbr, input$dt_co, input$dt_ro, input$dt_ro_ext, input$dt_del)})
+	        if(length(plot_dt_res) == 1){
+			reaobj$dt_stat <- plot_dt_res
+		}
+	        plot_dt_res
        		dev.off()
        	}
     )
