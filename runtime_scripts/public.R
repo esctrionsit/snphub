@@ -246,9 +246,12 @@ pub_check_gro_sample_name <- function(co){
     grolis <- pub_sub_rawgroup(co)
     text_pub_err_samples <<- ""
     text_pub_err_groups <<- ""
-    if(is.na(grolis)){
-        return(NA)
+    if(length(is.na(grolis))==1){
+        if(is.na(grolis)){
+            return(NA)
+        }
     }
+
     res <- c()
     for(groele in grolis){
         if(grepl("\\}", groele)){
