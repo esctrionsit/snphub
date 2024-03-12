@@ -346,33 +346,36 @@ shinyServer(function(input, output, session){
 		    	reaobj$hn_stat <- "System Info: Done"
 		    }else{
 		    	reaobj$text_hn_para <- "Parameter: "
+			if(is.numeric(plot_hn_res))
 		    	code <- as.numeric(plot_hn_res)
 		    	plot_hn_res <- NA
-		    	if(code == 1){
-			        reaobj$hn_stat <- "Error 0001:Flanking length must be integer."
+			if(length(code == 1) == 1){
+		    	    if(code == 1){
+				reaobj$hn_stat <- "Error 0001:Flanking length must be integer."
 			    }else if(code == 2){
-			        reaobj$hn_stat <- "Error 0002:Invalid region."
+				reaobj$hn_stat <- "Error 0002:Invalid region."
 			    }else if(code == 3){
-			        reaobj$hn_stat <- "Error 0003:Region is too long."
+				reaobj$hn_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
-			    	message <- "Error 0004:Invalid accession or group detected."
-			        if(text_pub_err_samples != ""){
+				message <- "Error 0004:Invalid accession or group detected."
+				if(text_pub_err_samples != ""){
 						message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
-			        }
-			        if(text_pub_err_groups != ""){
+				}
+				if(text_pub_err_groups != ""){
 						message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
-			        }
-			        reaobj$hn_stat <- message
+				}
+				reaobj$hn_stat <- message
 			    }else if(code == 5){
-			        reaobj$hn_stat <- "Error 0005:Duplicate sample name is not allowed."
+				reaobj$hn_stat <- "Error 0005:Duplicate sample name is not allowed."
 			    }else if(code == 101){
-			        reaobj$hn_stat <- "Error 0101:No variation found in current regions."
+				reaobj$hn_stat <- "Error 0101:No variation found in current regions."
 			    }else if(code == 6){
-			        reaobj$hn_stat <- "Error 0006:Group not found."
+				reaobj$hn_stat <- "Error 0006:Group not found."
 			    }else if(code == 201){
-			        reaobj$hn_stat <- "Error 0201:Only has one type of haplotype."
+				reaobj$hn_stat <- "Error 0201:Only has one type of haplotype."
 			    }
 			    reaobj$hn_err_on <- T
+			}
 		    }
 		    plot_hn_res
         }
@@ -881,7 +884,8 @@ shinyServer(function(input, output, session){
 	    	reaobj$text_hp_para <- "Parameter: "
 	    	code <- as.numeric(reaobj$plot_hp_res)
 	    	reaobj$plot_hp_res <- NA
-	    	if(code == 1){
+		if(length(code == 1) == 1){
+	    	    if(code == 1){
 		        reaobj$hp_stat <- "Error 0001:Flanking length must be integer."
 		    }else if(code == 2){
 		        reaobj$hp_stat <- "Error 0002:Invalid region."
@@ -906,6 +910,7 @@ shinyServer(function(input, output, session){
     		reaobj$hp_err_on <- T
     		reaobj$int_hp_plot_width <- 500
     		reaobj$int_hp_plot_height <- 500
+		}
 	    }
     })
 
