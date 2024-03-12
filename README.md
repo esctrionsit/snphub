@@ -30,13 +30,13 @@ To run the SnpHub, make sure the following software programs are **already** ins
 - tabix (≥ **v1.6**)
 
 Also, the following R packages are also prerequisites:
-- ggplot2
+- ggplot2 (v3.3.2)
 - crayon
 - ggmap
 - dplyr
 - rjson
 - shiny
-- pegas
+- pegas (v0.11)
 - maps
 - vcfR
 - ape
