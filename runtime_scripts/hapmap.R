@@ -46,6 +46,8 @@ hm_main <- function(co, ro, mis, lon, lat, mer, scal){
         text_hm_NAwarning <<- paste("Warning: Sample ", paste(NAname_lis, collapse=","), " is/are ignored for don't having location information.")
     }
 
+    if(nrow(fra_hm_detail) == 0){ return(hm_error_message(102)) }
+      
     p <- hm_draw_plot(lon, lat, mer, co, ro)
     p
   })
