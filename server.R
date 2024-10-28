@@ -940,27 +940,29 @@ shinyServer(function(input, output, session){
 	    		reaobj$hm_err_on <- T
 	    	}else{
 		    	if(code == 1){
-			        reaobj$hm_stat <- "Error 0001:Flanking length must be integer."
+					reaobj$hm_stat <- "Error 0001:Flanking length must be integer."
 			    }else if(code == 2){
-			        reaobj$hm_stat <- "Error 0002:Invalid region. Did you noticed that just ONE site is needed here?"
+					reaobj$hm_stat <- "Error 0002:Invalid region. Did you noticed that just ONE site is needed here?"
 			    }else if(code == 3){
 					reaobj$hm_stat <- "Error 0003:Region is too long."
 			    }else if(code == 4){
-			    	message <- "Error 0004:Invalid accession or group detected."
-			        if(text_pub_err_samples != ""){
+					message <- "Error 0004:Invalid accession or group detected."
+					if(text_pub_err_samples != ""){
 						message <- paste(message, " Samples: ", text_pub_err_samples, ". ", sep="")
-			        }
-			        if(text_pub_err_groups != ""){
+					}
+					if(text_pub_err_groups != ""){
 						message <- paste(message, " Groups: ", text_pub_err_groups, ". ", sep="")
-			        }
-			        reaobj$hm_stat <- message
+					}
+					reaobj$hm_stat <- message
 			    }else if(code == 5){
-			        reaobj$hm_stat <- "Error 0005:Duplicate sample name is not allowed."
+					reaobj$hm_stat <- "Error 0005:Duplicate sample name is not allowed."
 			    }else if(code == 6){
-			        reaobj$hm_stat <- "Error 0006:Zoom factor must be numeric."
+					reaobj$hm_stat <- "Error 0006:Zoom factor must be numeric."
 			    }else if(code == 101){
-			        reaobj$hm_stat <- "Error 0101:No variation found in current regions."
-	    		}
+					reaobj$hm_stat <- "Error 0101:No variation found in current regions."
+	    		}else if(code == 102){
+					reaobj$hm_stat <- "Error 0102:No available samples remained in the current sample list."
+			    }
 	    		reaobj$hm_err_on <- T
 	    	}
 	    	reaobj$plot_hm_res <- NA
